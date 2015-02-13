@@ -64,7 +64,8 @@ class MathJax {
 
     $regex = array();
     // Wrap any text between $ ... $ or $$ ... $$ in display math tags.
-    $regex['latex'] = '~(?<!\\\\)(\$\$?)(.+?)\1~msx';
+    $regex['latex-block'] = '~(?<!\\\\)(\$\$)(.+?)\1~msx';
+    $regex['latex-inline'] = '~(?<!\\\\)(\$)(.+?)\1~msx';
 
 		// Wrap any text between \[ and \] in display math tags.
     $regex['block'] = '~
@@ -87,7 +88,7 @@ class MathJax {
 
     // Replace all math formulas by a (unique) hash
     foreach ( $regex as $key => $re ) {
-      $content = preg_replace_callback($re, function($matches) {
+      $content = preg_replace_callback($re, function($matches) use ($key) {
         return $this->hash(trim($matches[0]), $key);
       }, $content);
     }
@@ -171,6 +172,11 @@ class MathJax {
 
     // Then hash the block
     $key = implode('::', array('mathjax', $type, $this->id, ++$counter, 'M'));
+
+    // Wrap and add class to formula
+    $inline = ( strpos($type, 'inline') !== FALSE ) ? 'inline' : 'block';
+    $text = '<span class="mathjax ' . $inline . '">' . $text . '</span>';
+
     $this->hashes[$key] = $text;
 
     // String that will replace the tag
