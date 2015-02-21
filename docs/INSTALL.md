@@ -41,7 +41,7 @@ Manually updating `MathJax` is pretty simple. Here is what you will need to do t
 
 * Delete the `your/site/user/plugins/mathjax` directory.
 * Downalod the new version of the Archive Plus plugin from either [GitHub](https://github.com/sommerregen/grav-plugin-mathjax) or [GetGrav.org](http://getgrav.org/downloads/plugins#dropcaps).
-* Unzip the zip file in `your/site/user/plugins` and rename the resulting folder to `MathJax`.
+* Unzip the zip file in `your/site/user/plugins` and rename the resulting folder to `mathjax`.
 * Clear the Grav cache. The simplest way to do this is by going to the root Grav directory in terminal and typing `bin/grav clear-cache`.
 
 >> Note: Any changes you have made to any of the files listed under this directory will also be removed and replaced by the new set. Any files located elsewhere (for example a YAML settings file placed in `user/config/plugins`) will remain intact.

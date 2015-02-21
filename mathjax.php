@@ -1,6 +1,6 @@
 <?php
 /**
- * MathJax v1.0.0
+ * MathJax v1.1.0
  *
  * This plugin allows you to include math formulas in your web pages,
  * either using TeX and LaTeX notation, and/or as MathML.
@@ -8,9 +8,9 @@
  * Licensed under MIT, see LICENSE.
  *
  * @package     MathJax
- * @version     1.0.0
+ * @version     1.1.0
  * @link        <https://github.com/sommerregen/grav-plugin-mathjax>
- * @author      Benjamin Regler <sommergen@benjamin-regler.de>
+ * @author      Benjamin Regler <sommerregen@benjamin-regler.de>
  * @copyright   2015, Benjamin Regler
  * @license     <http://opensource.org/licenses/MIT>            MIT
  */
@@ -91,10 +91,11 @@ class MathJaxPlugin extends Plugin {
   /**
    * Add content after page content was read into the system.
    *
-   * @param  Event  $event [description]
+   * @param  Event  $event An event object, when `onPageContentRaw` is
+   *                       fired.
    */
   public function onPageContentRaw(Event $event) {
-    // Get the page header
+    /** @var Page $page */
     $page = $event['page'];
     $config = $this->mergeConfig($page);
 
@@ -112,7 +113,8 @@ class MathJaxPlugin extends Plugin {
   /**
    * Add content after page was processed.
    *
-   * @param Event $event
+   * @param Event $event An event object, when `onPageContentProcessed`
+   *                     is fired.
    */
   public function onPageContentProcessed(Event $event) {
     // Get the page header
@@ -120,7 +122,7 @@ class MathJaxPlugin extends Plugin {
 
     // Normalize page content, if modified
     if ( $this->mathjax->modified() ) {
-      // Get modified content and replace all tokens with their
+      // Get modified content, replace all tokens with their
       // respective formula and write content back to page
       $content = $page->getRawContent();
       $page->setRawContent($this->mathjax->normalize($content));
@@ -140,6 +142,8 @@ class MathJaxPlugin extends Plugin {
    */
   public function onTwigPageVariables() {
     // Get current page and configurations
+
+    /** @var Page $page */
     $page = $this->grav['page'];
     $config = $this->mergeConfig($page);
 
@@ -150,7 +154,7 @@ class MathJaxPlugin extends Plugin {
 
     // Add MathJax configuration file to page
     if ( $this->config->get('plugins.mathjax.built_in_js') ) {
-      $this->grav['assets']->add('plugin://mathjax/js/mathjax.js');
+      $this->grav['assets']->add('plugin://mathjax/assets/js/mathjax.js');
     }
 
     // Resolve user data path
