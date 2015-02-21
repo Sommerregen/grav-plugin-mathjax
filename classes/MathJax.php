@@ -53,6 +53,7 @@ class MathJax {
    * Process contents i.e. replace all math formulas by a (unique) hash
    *
    * @param  string $content The content to be processed
+   *
    * @return string          The processed content
    */
 	public function process($content) {
@@ -101,6 +102,7 @@ class MathJax {
    * math formula
    *
    * @param  string $content The content to be processed
+   *
    * @return string          The processed content
    */
   public function normalize($content) {
@@ -129,6 +131,7 @@ class MathJax {
    * Gets and sets the identifier for hashing.
    *
    * @param  string $var the identifier
+   *
    * @return string      the identifier
    */
   public function id($var = null) {
@@ -160,6 +163,7 @@ class MathJax {
    *
    * @param  string $text The text to be hashed
    * @param  string $type The type (category) the text should be saved
+   *
    * @return string       Return a unique text-token which will be
    *                      reverted back when calling unhash.
    */
@@ -187,6 +191,7 @@ class MathJax {
    * Swap back in all the tags hashed by hash.
    *
    * @param  string $text The text to be un-hashed
+   *
    * @return string       A text containing no hash inside
    */
   protected function unhash($text) {

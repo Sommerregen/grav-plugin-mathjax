@@ -25,7 +25,7 @@ Installing or updating the `MathJax` plugin can be done in one of two ways. Usin
 
     /your/site/grav/user/plugins/mathjax
 
-For more informations, please check the [Installation and update guide](INSTALL.md).
+For more informations, please check the [Installation and update guide](docs/INSTALL.md).
 
 ## Usage
 
@@ -57,7 +57,7 @@ If you want to alter the settings for one or only few pages, you can do so by ad
 
 ```
 mathjax:
-  process: true               # (De-)Activate MathJax filter locally
+  process: true
 ```
 
 to activate `MathJax` filter just for this page.
@@ -68,7 +68,7 @@ The `MathJax` plugin allows you to either use the MathJax CDN (recommended) or t
 
   1. Download the latest MathJax release from https://github.com/mathjax/mathjax.
   2. Extract the contents to your Grav `user/data/mathjax` folder. Make sure that the file `mathjax.js` is present in the above folder (and not in any sub-folders).
-  3. Copy the [mathjax.yaml](mathjax.yaml) file into your `users/config/plugins/` folder (create it if it doesn't exist), and then set `CDN: enabled: false`.
+  3. Copy the [mathjax.yaml](mathjax.yaml) file into your `users/config/plugins/` folder (create it if it doesn't exist), and then set `CDN.enabled: false`.
 
 ### JavaScript Override
 
@@ -100,13 +100,13 @@ window.MathJax = {
 
 ## Contributing
 
-You can contribute at any time! Before opening any issue, please search for existing issues and review the [guidelines for contributing](CONTRIBUTING.md).
+You can contribute at any time! Before opening any issue, please search for existing issues and review the [guidelines for contributing](docs/CONTRIBUTING.md).
 
 After that please note:
 
 * If you find a bug or would like to make a feature request or suggest an improvement, [please open a new issue][issues]. If you have any interesting ideas for additions to the syntax please do suggest them as well!
 * Feature requests are more likely to get attention if you include a clearly described use case.
-* If you wish to submit a pull request, please make again sure that your request match the [guidelines for contributing](CONTRIBUTING.md) and that you keep track of adding unit tests for any new or changed functionality.
+* If you wish to submit a pull request, please make again sure that your request match the [guidelines for contributing](docs/CONTRIBUTING.md) and that you keep track of adding unit tests for any new or changed functionality.
 
 ### Support and donations
 
