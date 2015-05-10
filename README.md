@@ -37,6 +37,7 @@ The `MathJax` plugin comes with some sensible default configuration, that are pr
 # Global plugin configurations
 
 enabled: true                 # Set to false to disable this plugin completely
+built_in_css: true           # Use built-in CSS of the plugin
 built_in_js: true             # Use built-in JS of the plugin
 weight: -5                    # Set the weight (order of execution)
 
@@ -70,11 +71,23 @@ The `MathJax` plugin allows you to either use the MathJax CDN (recommended) or t
   2. Extract the contents to your Grav `user/data/mathjax` folder. Make sure that the file `mathjax.js` is present in the above folder (and not in any sub-folders).
   3. Copy the [mathjax.yaml](mathjax.yaml) file into your `users/config/plugins/` folder (create it if it doesn't exist), and then set `CDN.enabled: false`.
 
+### CSS Stylesheet Override
+
+Something you might want to do is to override the look and feel of the math formulas, and with Grav it is super easy.
+
+Copy the stylesheet [assets/css/mathjax.css](assets/css/mathjax.css) into the `css` folder of your custom theme, and add it to the list of CSS files.
+
+```
+/your/site/grav/user/themes/custom-theme/css/mathjax.css
+```
+
+After that set the `built_in_css` option of the `MathJax` plugin to `false`. That's it.
+
 ### JavaScript Override
 
 Something you might want to do is to override the behavior of how MathJax will process your math formulas, and with Grav it is super easy.
 
-Copy the javascript [js/mathjax.js](js/mathjax.js) into the `js` folder of your custom theme, and add it to the list of JS files
+Copy the javascript [assets/js/mathjax.js](assets/js/mathjax.js) into the `js` folder of your custom theme, and add it to the list of JS files
 
 ```
 /your/site/grav/user/themes/custom-theme/js/mathjax.js

@@ -19,7 +19,8 @@ use Grav\Common\GravTrait;
  * Helper class to include math formulas in your web pages, either using
  * TeX and LaTeX notation, and/or as MathML.
  */
-class MathJax {
+class MathJax
+{
   /**
    * @var MathJax
    */
@@ -56,14 +57,15 @@ class MathJax {
    *
    * @return string          The processed content
    */
-	public function process($content) {
+	public function process($content)
+  {
 		// Set unique identifier based on page content
 		$this->id(time().md5($content));
 
     // Reset class hashes before processing
     $this->reset();
 
-    $regex = array();
+    $regex = [];
     // Wrap any text between $ ... $ or $$ ... $$ in display math tags.
     $regex['latex-block'] = '~(?<!\\\\)(\$\$)(.+?)\1~msx';
     $regex['latex-inline'] = '~(?<!\\\\)(\$)(.+?)\1~msx';
@@ -88,7 +90,7 @@ class MathJax {
       ~msxUX';
 
     // Replace all math formulas by a (unique) hash
-    foreach ( $regex as $key => $re ) {
+    foreach ($regex as $key => $re) {
       $content = preg_replace_callback($re, function($matches) use ($key) {
         return $this->hash(trim($matches[0]), $key);
       }, $content);
@@ -105,7 +107,8 @@ class MathJax {
    *
    * @return string          The processed content
    */
-  public function normalize($content) {
+  public function normalize($content)
+  {
     $hashes = array_keys($this->hashes);
     $text = array_values($this->hashes);
 
@@ -119,12 +122,13 @@ class MathJax {
   /**
    * Check whether page content was modified or not.
    *
-   * @return boolean     TRUE if content was modified and should be
-   *                     re-processed (i.e. replacing tokens), FALSE
+   * @return boolean     true if content was modified and should be
+   *                     re-processed (i.e. replacing tokens), false
    *                     otherwise.
    */
-  public function modified() {
-    return (count($this->hashes) > 0) ? TRUE : FALSE;
+  public function modified()
+  {
+    return (count($this->hashes) > 0) ? true : false;
   }
 
   /**
@@ -134,7 +138,8 @@ class MathJax {
    *
    * @return string      the identifier
    */
-  public function id($var = null) {
+  public function id($var = null)
+  {
     if ($var !== null) {
       $this->id = $var;
     }
@@ -149,8 +154,9 @@ class MathJax {
   /**
    * Reset MathJax class
    */
-  protected function reset() {
-    $this->hashes = array();
+  protected function reset()
+  {
+    $this->hashes = [];
   }
 
   /**
@@ -167,7 +173,8 @@ class MathJax {
    * @return string       Return a unique text-token which will be
    *                      reverted back when calling unhash.
    */
-  protected function hash($text, $type = '') {
+  protected function hash($text, $type = '')
+  {
   	static $counter = 0;
 
     // Swap back any tag hash found in $text so we do not have to `unhash`
@@ -178,8 +185,8 @@ class MathJax {
     $key = implode('::', array('mathjax', $type, $this->id, ++$counter, 'M'));
 
     // Wrap and add class to formula
-    $inline = ( strpos($type, 'inline') !== FALSE ) ? 'inline' : 'block';
-    $text = '<span class="mathjax ' . $inline . '">' . $text . '</span>';
+    $inline = (strpos($type, 'inline') !== false) ? 'inline' : 'block';
+    $text = '<span class="mathjax '.$inline.'">'.$text.'</span>';
 
     $this->hashes[$key] = $text;
 
@@ -194,7 +201,8 @@ class MathJax {
    *
    * @return string       A text containing no hash inside
    */
-  protected function unhash($text) {
+  protected function unhash($text)
+  {
     $pattern = '~mathjax::(.+)::([0-9a-z]+)::([0-9]+)::M~i';
     $text = preg_replace_callback($pattern, function($atches) {
       return $this->hashes[$matches[0]];
