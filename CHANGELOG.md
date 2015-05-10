@@ -1,3 +1,12 @@
+# v1.1.1
+## 05/10/2015
+
+1. [](#new)
+	* Support modular pages
+	* Added CSS stylesheet and `built_in_css` option
+2. [](#improved)
+  * PSR fixes
+
 # v1.1.0
 ## 02/21/2015
 
