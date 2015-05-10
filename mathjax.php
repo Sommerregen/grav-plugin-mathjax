@@ -85,7 +85,7 @@ class MathJaxPlugin extends Plugin
       $this->enable([
         'onPageContentRaw' => ['onPageContentRaw', 0],
         'onPageContentProcessed' => ['onPageContentProcessed', $weight],
-        'onTwigPageVariables' => ['onTwigPageVariables', 0]
+        'onTwigSiteVariables' => ['onTwigSiteVariables', 0]
       ]);
     }
   }
@@ -144,7 +144,7 @@ class MathJaxPlugin extends Plugin
   /**
    * Set needed variables to display MathJax LaTeX formulas.
    */
-  public function onTwigPageVariables()
+  public function onTwigSiteVariables()
   {
     // Get current page and configurations
 
@@ -157,8 +157,13 @@ class MathJaxPlugin extends Plugin
       return;
     }
 
+    // Add MathJax stylesheet to page
+    if ($this->config->get('plugins.mathjax.built_in_css')) {
+      $this->grav['assets']->add('plugin://mathjax/assets/css/mathjax.css');
+    }
+
     // Add MathJax configuration file to page
-    if ( $this->config->get('plugins.mathjax.built_in_js') ) {
+    if ($this->config->get('plugins.mathjax.built_in_js')) {
       $this->grav['assets']->add('plugin://mathjax/assets/js/mathjax.js');
     }
 
