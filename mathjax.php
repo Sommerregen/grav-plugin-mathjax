@@ -1,6 +1,6 @@
 <?php
 /**
- * MathJax v1.1.1
+ * MathJax v1.2.0
  *
  * This plugin allows you to include math formulas in your web pages,
  * either using TeX and LaTeX notation, and/or as MathML.
@@ -8,7 +8,7 @@
  * Licensed under MIT, see LICENSE.
  *
  * @package     MathJax
- * @version     1.1.1
+ * @version     1.2.0
  * @link        <https://github.com/sommerregen/grav-plugin-mathjax>
  * @author      Benjamin Regler <sommerregen@benjamin-regler.de>
  * @copyright   2015, Benjamin Regler
@@ -45,6 +45,13 @@ class MathJaxPlugin extends Plugin
    * @var object
    */
   protected $mathjax;
+
+  /**
+   * Modified current page?
+   *
+   * @var boolean
+   */
+  protected $modified = false;
 
   /** -------------
    * Public methods
@@ -138,6 +145,11 @@ class MathJaxPlugin extends Plugin
         'content' => 'IE=edge'
       );
       $page->metadata($metadata);
+
+      // Dynamically add assets only for (current) modified page
+      if ($this->grav['page']->slug() == $page->slug()) {
+        $this->modified = true;
+      }
     }
   }
 
@@ -153,7 +165,7 @@ class MathJaxPlugin extends Plugin
     $config = $this->mergeConfig($page);
 
     // Skip if process is set to false
-    if (!$config->get('process', false)) {
+    if (!$config->get('process', false) || !$this->modified) {
       return;
     }
 
