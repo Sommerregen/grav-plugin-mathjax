@@ -46,6 +46,13 @@ class MathJaxPlugin extends Plugin
    */
   protected $mathjax;
 
+  /**
+   * Modified current page?
+   *
+   * @var boolean
+   */
+  protected $modified = false;
+
   /** -------------
    * Public methods
    * --------------
@@ -138,6 +145,11 @@ class MathJaxPlugin extends Plugin
         'content' => 'IE=edge'
       );
       $page->metadata($metadata);
+
+      // Dynamically add assets only for (current) modified page
+      if ($this->grav['page']->slug() == $page->slug()) {
+        $this->modified = true;
+      }
     }
   }
 
@@ -153,7 +165,7 @@ class MathJaxPlugin extends Plugin
     $config = $this->mergeConfig($page);
 
     // Skip if process is set to false
-    if (!$config->get('process', false)) {
+    if (!$config->get('process', false) || !$this->modified) {
       return;
     }
 
