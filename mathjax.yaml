@@ -5,7 +5,7 @@ built_in_css: true            # Use built-in CSS of the plugin
 built_in_js: true             # Use built-in JS of the plugin
 weight: -5                    # Set the weight (order of execution)
 
-# Default values for MathJax configuration.
+# Default values for MathJax configuration
 
 CDN:
   enabled: true               # Use MathJax Content Delivery Network (CDN)

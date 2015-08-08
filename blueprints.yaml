@@ -1,5 +1,5 @@
 name: MathJax
-version: 1.2.0
+version: 1.3.0
 description: "This plugin allows you to include math formulas in your web pages, either using TeX and LaTeX notation, and/or as MathML."
 icon: subscript
 author:
@@ -9,69 +9,97 @@ homepage: https://github.com/sommerregen/grav-plugin-mathjax
 docs: https://github.com/sommerregen/grav-plugin-mathjax/blob/master/README.md
 keywords: [mathjax, filter, javascript, plugin]
 bugs: https://github.com/sommerregen/grav-plugin-mathjax/issues
-license: MIT
+license: MIT/GPL
 
 form:
   validation: strict
   fields:
-    enabled:
-      type: toggle
-      label: Plugin Status
-      highlight: 1
-      default: 0
-      options:
-        1: Enabled
-        0: Disabled
-      validate:
-        type: bool
+    global:
+      type: section
+      title: "Global plugin configurations"
+      underline: 1
 
-    built_in_css:
-      type: toggle
-      label: Use built in CSS
-      highlight: 1
-      default: 1
-      options:
-        1: Enabled
-        0: Disabled
-      validate:
-        type: bool
+      fields:
+        enabled:
+          type: toggle
+          label: "Plugin Status"
+          highlight: 1
+          default: 0
+          options:
+            1: Enabled
+            0: Disabled
+          validate:
+            type: bool
 
-    weight:
-      type: text
-      label: Set the weight (order of execution)
-      default: -5
-      help: "To process the page content right after *SmartyPants* use negative values."
-      validate:
-        type: int
-        min: -100
-        max: 100
+        built_in_css:
+          type: toggle
+          label: "Use built in CSS"
+          highlight: 1
+          default: 1
+          options:
+            1: "Yes"
+            0: "No"
+          validate:
+            type: bool
 
-    CDN.enabled:
-      type: toggle
-      label: Use MathJax Content Delivery Network (CDN)
-      help: "Check this box to load MathJax source from MathJax servers (recommended) or from the link you can provide below."
-      highlight: 1
-      default: 1
-      options:
-        1: Enabled
-        0: Disabled
-      validate:
-        type: bool
+        built_in_js:
+          type: toggle
+          label: "Use built in JS"
+          highlight: 1
+          default: 1
+          options:
+            1: "Yes"
+            0: "No"
+          validate:
+            type: bool
 
-    CDN.url:
-      type: text
-      label: MathJax CDN URL
-      default: https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
-      placeholder: https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
-      help: "Enter the Mathjax CDN url here or leave it unchanged to use the one provided by wwww.mathjax.org"
+        weight:
+          type: text
+          size: x-small
+          label: "Order execution"
+          default: -5
+          help: "To process the page content right after *SmartyPants* use negative values."
+          validate:
+            type: int
+            min: -100
+            max: 100
 
-    process:
-      type: toggle
-      label: Activate `MathJax` filter
-      highlight: 1
-      default: 0
-      options:
-        1: Enabled
-        0: Disabled
-      validate:
-        type: bool
+    default:
+      type: section
+      title: "Default values for MathJax configuration"
+      underline: 1
+
+      fields:
+        CDN.enabled:
+          type: toggle
+          label: "Use MathJax Content Delivery Network (CDN)"
+          help: "Check this box to load MathJax source from MathJax servers (recommended) or from the link you can provide below."
+          default: 1
+          options:
+            1: "Yes"
+            0: "No"
+          validate:
+            type: bool
+
+        CDN.url:
+          type: text
+          label: "MathJax CDN URL"
+          default: https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+          placeholder: https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+          help: "Enter the Mathjax CDN url here or leave it unchanged to use the one provided by wwww.mathjax.org"
+
+    specific:
+      type: section
+      title: "Global and page specific configurations"
+      underline: 1
+
+      fields:
+        process:
+          type: toggle
+          label: "Activate <code>MathJax</code> filter per page"
+          default: 0
+          options:
+            1: "Yes"
+            0: "No"
+          validate:
+            type: bool

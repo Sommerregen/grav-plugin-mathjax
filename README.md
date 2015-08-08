@@ -1,6 +1,17 @@
-# [Grav MathJax Plugin][project]
+# [![Grav MathJax Plugin](assets/logo.png)][project]
+
+[![Release](https://img.shields.io/github/release/sommerregen/grav-plugin-mahtjax.svg)][project] [![Issues](https://img.shields.io/github/issues/sommerregen/grav-plugin-mahtjax.svg)][issues] [![Dual license](https://img.shields.io/badge/dual%20license-MIT%2FGPL-blue.svg)](LICENSE "License") <span style="float:right;">[![Flattr](https://api.flattr.com/button/flattr-badge-large.png)][flattr] [![PayPal](https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif)][paypal]</span>
 
 > This plugin allows you to include math formulas in your web pages, either using TeX and LaTeX notation, and/or as MathML.
+
+* [About](#about)
+* [Installation and Updates](#installation-and-updates)
+* [Usage](#usage)
+    * [Example](#example)
+    * [CSS Stylesheet Override](#css-stylesheet-override)
+    * [JavaScript Override](#javascript-override)
+* [Contributing](#contributing)
+* [Licencse](#license)
 
 ## About
 
@@ -18,9 +29,9 @@ default math delimiters are `$$...$$` and `\\[...\\]` for displayed mathematics,
 
 ## Installation and Updates
 
-Installing or updating the `MathJax` plugin can be done in one of two ways. Using the GPM (Grav Package Manager) installation method or manual install or update method by downloading [this plugin](https://github.com/sommerregen/grav-plugin-mathjax) and extracting all plugin files to
+Installing or updating the `MathJax` plugin can be done in one of two ways. Using the GPM (Grav Package Manager) installation method or (i.e. `bin/gpm install mathjay`) manual install or update method by downloading [this plugin](https://github.com/sommerregen/grav-plugin-mathjax) and extracting all plugin files to
 
-    /your/site/grav/user/plugins/mathjax
+    user/plugins/mathjax
 
 For more informations, please check the [Installation and update guide](docs/INSTALL.md).
 
@@ -34,7 +45,7 @@ To produce the formula shown in the above screenshot, create a new Markdown docu
 
 The code to copy and paste is as follows:
 
-```
+```markdown
 ---
 title: Einstein Field Equations
 ---
@@ -96,8 +107,7 @@ If you need to change any value, then the best process is to copy the [mathjax.y
 If you want to alter the settings for one or only few pages, you can do so by adding page specific configurations into your page headers, e.g.
 
 ```yaml
-mathjax:
-  process: false
+mathjax: false
 ```
 
 to deactivate `MathJax` filter just for this page.
@@ -116,9 +126,7 @@ Something you might want to do is to override the look and feel of the math form
 
 Copy the stylesheet [assets/css/mathjax.css](assets/css/mathjax.css) into the `css` folder of your custom theme, and add it to the list of CSS files.
 
-```
-/your/site/grav/user/themes/custom-theme/css/mathjax.css
-```
+    user/themes/custom-theme/css/mathjax.css
 
 After that set the `built_in_css` option of the `MathJax` plugin to `false`. That's it.
 
@@ -128,9 +136,7 @@ Something you might want to do is to override the behavior of how MathJax will p
 
 Copy the javascript [assets/js/mathjax.js](assets/js/mathjax.js) into the `js` folder of your custom theme, and add it to the list of JS files
 
-```
-/your/site/grav/user/themes/custom-theme/js/mathjax.js
-```
+    user/themes/custom-theme/js/mathjax.js
 
 via `{% do assets.addJs('theme://js/mathjax.js') %}` i.e. in your **base.html.twig** file located in **antimatter/templates/partials/**.
 
@@ -156,13 +162,13 @@ You can contribute at any time! Before opening any issue, please search for exis
 
 After that please note:
 
-* If you find a bug or would like to make a feature request or suggest an improvement, [please open a new issue][issues]. If you have any interesting ideas for additions to the syntax please do suggest them as well!
+* If you find a bug, would like to make a feature request or suggest an improvement, [please open a new issue][issues]. If you have any interesting ideas for additions to the syntax please do suggest them as well!
 * Feature requests are more likely to get attention if you include a clearly described use case.
 * If you wish to submit a pull request, please make again sure that your request match the [guidelines for contributing](docs/CONTRIBUTING.md) and that you keep track of adding unit tests for any new or changed functionality.
 
 ### Support and donations
 
-If you like my project, feel free to support me, since donations will keep this project alive. You can [![Flattr me](https://api.flattr.com/button/flattr-badge-large.png)][flattr] or send me some bitcoins to **1HQdy5aBzNKNvqspiLvcmzigCq7doGfLM4** whenever you want.
+If you like my project, feel free to support me via [![Flattr](https://api.flattr.com/button/flattr-badge-large.png)][flattr] or by sending me some bitcoins to [**1HQdy5aBzNKNvqspiLvcmzigCq7doGfLM4**][bitcoin].
 
 Thanks!
 
@@ -170,12 +176,18 @@ Thanks!
 
 Copyright (c) 2015 [Benjamin Regler][github]. See also the list of [contributors] who participated in this project.
 
-[Licensed](LICENSE) for use under the terms of the [MIT license][mit-license].
+[Dual-licensed](LICENSE) for use under the terms of the [MIT][mit-license] or [GPLv3][gpl-license] licenses.
+
+![GNU license - Some rights reserved][gnu]
 
 [github]: https://github.com/sommerregen/ "GitHub account from Benjamin Regler"
+[gpl-license]: http://opensource.org/licenses/GPL-3.0 "GPLv3 license"
 [mit-license]: http://www.opensource.org/licenses/mit-license.php "MIT license"
 
 [flattr]: https://flattr.com/submit/auto?user_id=Sommerregen&url=https://github.com/sommerregen/grav-plugin-mathjax "Flatter my GitHub project"
+[paypal]: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SYFNP82USG3RN "Donate for my GitHub project using PayPal"
+[bitcoin]: bitcoin:1HQdy5aBzNKNvqspiLvcmzigCq7doGfLM4?label=GitHub%20project "Donate for my GitHub project using BitCoin"
+[gnu]: https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/License_icon-gpl-88x31.svg/88px-License_icon-gpl-88x31.svg.png "GNU license - Some rights reserved"
 
 [project]: https://github.com/sommerregen/grav-plugin-mathjax
 [issues]: https://github.com/sommerregen/grav-plugin-mathjax/issues "GitHub Issues for Grav MathJax Plugin"

@@ -2,16 +2,16 @@
 /**
  * MathJax
  *
- * Helper class to include math formulas in your web pages, either using
- * TeX and LaTeX notation, and/or as MathML.
+ * This file is part of Grav MathJax plugin.
  *
- * Licensed under MIT, see LICENSE.
+ * Dual licensed under the MIT or GPL Version 3 licenses, see LICENSE.
+ * http://benjamin-regler.de/license/
  */
 
 namespace Grav\Plugin;
 
-use Grav\Common\Grav;
 use Grav\Common\GravTrait;
+use RocketTheme\Toolbox\Event\Event;
 
 /**
  * MathJax
@@ -51,19 +51,49 @@ class MathJax
    */
 
   /**
+   * MathJax shortcode
+   *
+   * @param  Event  $event An event object.
+   * @return string        The parsed shortcode.
+   */
+  public function mathjaxShortcode(Event $event)
+  {
+    /* @var \Grav\Common\Data\Data $options */
+    $options = $event['options'];
+
+    $body = trim($event['body']);
+    $type = $options->get('type', 'block');
+
+    // Setup tags to parse
+    $tags = [
+      'block' => ['\[', '\]'],
+      'inline' => ['\(', '\)']
+    ];
+
+    if (isset($tags[$type])) {
+      // Wrap text in display math tags
+      list($pre, $post) = $tags[$type];
+      $body = $pre.$body.$post;
+
+      return $this->process($body);
+    }
+  }
+
+  /**
    * Process contents i.e. replace all math formulas by a (unique) hash
    *
    * @param  string $content The content to be processed
+   * @param  string $id      An id to be incorporated into all replacements.
    *
    * @return string          The processed content
    */
-	public function process($content)
+	public function process($content, $id = null)
   {
 		// Set unique identifier based on page content
-		$this->id(time().md5($content));
+		$this->id($id ?: time().md5($content));
 
     // Reset class hashes before processing
-    $this->reset();
+    // $this->reset();
 
     $regex = [];
     // Wrap any text between $ ... $ or $$ ... $$ in display math tags.
