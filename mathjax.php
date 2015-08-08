@@ -5,22 +5,23 @@
  * This plugin allows you to include math formulas in your web pages,
  * either using TeX and LaTeX notation, and/or as MathML.
  *
- * Licensed under MIT, see LICENSE.
+ * Dual licensed under the MIT or GPL Version 3 licenses, see LICENSE.
+ * http://benjamin-regler.de/license/
  *
  * @package     MathJax
  * @version     1.2.0
  * @link        <https://github.com/sommerregen/grav-plugin-mathjax>
  * @author      Benjamin Regler <sommerregen@benjamin-regler.de>
  * @copyright   2015, Benjamin Regler
- * @license     <http://opensource.org/licenses/MIT>            MIT
+ * @license     <http://opensource.org/licenses/MIT>        MIT
+ * @license     <http://opensource.org/licenses/GPL-3.0>    GPLv3
  */
 
 namespace Grav\Plugin;
 
-use Grav\Common\Grav;
 use Grav\Common\Plugin;
-use Grav\Common\Page\Page;
 use RocketTheme\Toolbox\Event\Event;
+use Grav\Plugin\Shortcodes\BlockShortcode;
 
 /**
  * MathJax Plugin
@@ -44,14 +45,7 @@ class MathJaxPlugin extends Plugin
    *
    * @var object
    */
-  protected $mathjax;
-
-  /**
-   * Modified current page?
-   *
-   * @var boolean
-   */
-  protected $modified = false;
+  protected $backend;
 
   /** -------------
    * Public methods
@@ -67,23 +61,23 @@ class MathJaxPlugin extends Plugin
   public static function getSubscribedEvents()
   {
     return [
-      'onPluginsInitialized' => ['onPluginsInitialized', 0],
+      'onTwigInitialized' => ['onTwigInitialized', 0],
+      'onBuildPagesInitialized' => ['onBuildPagesInitialized', 0],
+      'onShortcodesInitialized' => ['onShortcodesInitialized', 0]
     ];
   }
 
   /**
-   * Initialize configuration.
+   * Initialize configuration when building pages.
    */
-  public function onPluginsInitialized() {
+  public function onBuildPagesInitialized() {
     if ($this->isAdmin()) {
       $this->active = false;
       return;
     }
 
     if ($this->config->get('plugins.mathjax.enabled')) {
-      // Initialize MathJax class
-      require_once(__DIR__.'/classes/MathJax.php');
-      $this->mathjax = new MathJax();
+      $this->init();
 
       $weight = $this->config->get('plugins.mathjax.weight', -5);
       // Process contents order according to weight option
@@ -91,8 +85,7 @@ class MathJaxPlugin extends Plugin
 
       $this->enable([
         'onPageContentRaw' => ['onPageContentRaw', 0],
-        'onPageContentProcessed' => ['onPageContentProcessed', $weight],
-        'onTwigSiteVariables' => ['onTwigSiteVariables', 0]
+        'onPageContentProcessed' => ['onPageContentProcessed', $weight]
       ]);
     }
   }
@@ -111,11 +104,11 @@ class MathJaxPlugin extends Plugin
 
     if ($config->get('process', false)) {
       // Get raw content and substitute all formulas by a unique token
-      $raw_content = $page->getRawContent();
+      $raw = $page->getRawContent();
 
       // Save modified page content with tokens as placeholders
       $page->setRawContent(
-        $this->mathjax->process($raw_content, $page->id())
+        $this->backend->process($raw, $page->id())
       );
     }
   }
@@ -132,11 +125,11 @@ class MathJaxPlugin extends Plugin
     $page = $event['page'];
 
     // Normalize page content, if modified
-    if ($this->mathjax->modified()) {
+    if ($this->backend->modified()) {
       // Get modified content, replace all tokens with their
       // respective formula and write content back to page
       $content = $page->getRawContent();
-      $page->setRawContent($this->mathjax->normalize($content));
+      $page->setRawContent($this->backend->normalize($content));
 
       // Set X-UA-Compatible meta tag for Internet Explorer
       $metadata = $page->metadata();
@@ -145,12 +138,18 @@ class MathJaxPlugin extends Plugin
         'content' => 'IE=edge'
       );
       $page->metadata($metadata);
-
-      // Dynamically add assets only for (current) modified page
-      if ($this->grav['page']->slug() == $page->slug()) {
-        $this->modified = true;
-      }
     }
+  }
+
+  /**
+   * Initialize Twig configuration and filters.
+   */
+  public function onTwigInitialized()
+  {
+    // Expose function
+    $this->grav['twig']->twig()->addFunction(
+      new \Twig_SimpleFunction('mathjax', [$this, 'mathjaxFunction'], ['is_safe' => ['html']])
+    );
   }
 
   /**
@@ -158,30 +157,30 @@ class MathJaxPlugin extends Plugin
    */
   public function onTwigSiteVariables()
   {
-    // Get current page and configurations
+    /** @var \Grav\Common\Grav $grav */
+    $grav = $this->grav;
 
     /** @var Page $page */
-    $page = $this->grav['page'];
+    $page = $grav['page'];
     $config = $this->mergeConfig($page);
 
     // Skip if process is set to false
-    if (!$config->get('process', false) || !$this->modified) {
+    if (!$config->get('process', false)) {
       return;
     }
 
     // Add MathJax stylesheet to page
     if ($this->config->get('plugins.mathjax.built_in_css')) {
-      $this->grav['assets']->add('plugin://mathjax/assets/css/mathjax.css');
+      $grav['assets']->add('plugin://mathjax/assets/css/mathjax.css');
     }
 
     // Add MathJax configuration file to page
     if ($this->config->get('plugins.mathjax.built_in_js')) {
-      $this->grav['assets']->add('plugin://mathjax/assets/js/mathjax.js');
+      $grav['assets']->add('plugin://mathjax/assets/js/mathjax.js');
     }
 
     // Resolve user data path
-    $locator = $this->grav['locator'];
-    $data_path = $locator->findResource('user://data');
+    $data_path = $grav['locator']->findResource('user://data');
 
     // Check if MathJax library was properly installed locally
     $installed = file_exists($data_path.DS.'mathjax'.DS.'MathJax.js');
@@ -190,10 +189,75 @@ class MathJaxPlugin extends Plugin
     if ($this->config->get('plugins.mathjax.CDN.enabled') || !$installed) {
       // Load MathJax library via CDN
       $cdn_url = $this->config->get('plugins.mathjax.CDN.url');
-      $this->grav['assets']->add($cdn_url);
+      $grav['assets']->add($cdn_url);
     } elseif ($installed) {
       // Load MathJax library from user data path
-      $this->grav['assets']->add('user://data'.DS.'mathjax'.DS.'MathJax.js');
+      $grav['assets']->add('user://data'.DS.'mathjax'.DS.'MathJax.js');
     }
+  }
+
+  /**
+   * Filter to parse external links.
+   *
+   * @param  string $content The content to be filtered.
+   * @param  array  $options Array of options for the External links filter.
+   *
+   * @return string          The filtered content.
+   */
+  public function externalLinksFunction($content, $params = [])
+  {
+    $config = $this->mergeConfig($this->grav['page'], $params);
+    return $this->init()->process($content, $config);
+  }
+
+  /**
+   * Register {{% mathjax %}} shortcode.
+   *
+   * @param  Event  $event An event object.
+   */
+  public function onShortcodesInitialized(Event $event)
+  {
+    $backend = $this->init();
+    // Register {{% mathjax %}} shortcode
+    $event['shortcodes']->register(
+      new BlockShortcode('mathjax', function($event) {
+        $weight = $this->config->get('plugins.mathjax.weight', -5);
+        $this->enable([
+          'onPageContentProcessed' => ['onPageContentProcessed', $weight]
+        ]);
+
+        // Update header to variable to bypass evaluation
+        if (isset($event['page']->header()->mathjax->process)){
+          $event['page']->header()->mathjax->process = true;
+        }
+
+        return $this->backend->mathjaxShortcode($event);
+      })
+    );
+  }
+
+  /** -------------------------------
+   * Private/protected helper methods
+   * --------------------------------
+   */
+
+  /**
+   * Initialize plugin and all dependencies.
+   *
+   * @return \Grav\Plugin\ExternalLinks   Returns ExternalLinks instance.
+   */
+  protected function init()
+  {
+    if (!$this->backend) {
+      // Initialize MathJax class
+      require_once(__DIR__ . '/classes/MathJax.php');
+      $this->backend = new MathJax();
+
+      $this->enable([
+        'onTwigSiteVariables' => ['onTwigSiteVariables', 0]
+      ]);
+    }
+
+    return $this->backend;
   }
 }
