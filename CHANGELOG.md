@@ -1,3 +1,15 @@
+# v1.3.0
+## 08/08/2015
+
+1. [](#new)
+  * Added admin configurations **(requires Grav 0.9.34+)**
+  * Added `{{% mathjax type='block|inline' %}}` shortcode
+2. [](#improved)
+  * Switched to `onBuildPagesInitialized` event **(requires Grav 0.9.29+)**
+  * Updated `README.md`
+3. [](#bugfix)
+  * Fixed [#2](https://github.com/Sommerregen/grav-plugin-mathjax/issues/2) (JS script not added to page)
+
 # v1.2.0
 ## 05/14/2015
 

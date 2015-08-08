@@ -1,6 +1,6 @@
 <?php
 /**
- * MathJax v1.2.0
+ * MathJax v1.3.0
  *
  * This plugin allows you to include math formulas in your web pages,
  * either using TeX and LaTeX notation, and/or as MathML.
@@ -9,7 +9,7 @@
  * http://benjamin-regler.de/license/
  *
  * @package     MathJax
- * @version     1.2.0
+ * @version     1.3.0
  * @link        <https://github.com/sommerregen/grav-plugin-mathjax>
  * @author      Benjamin Regler <sommerregen@benjamin-regler.de>
  * @copyright   2015, Benjamin Regler
