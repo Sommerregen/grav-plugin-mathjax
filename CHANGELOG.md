@@ -1,3 +1,9 @@
+# v1.3.1
+## 09/09/2015
+
+2. [](#improved)
+  * Added blueprints for Grav Admin plugin
+
 # v1.3.0
 ## 08/08/2015
 
@@ -16,15 +22,15 @@
 1. [](#new)
   * Added usage example in [README.md](https://github.com/Sommerregen/grav-plugin-mathjax/blob/master/README.md)
 2. [](#improved)
-	* Add assets (CSS and JS) dynamical to page now
-	* Changed default value `process: false` to `process: true` in [mathjax.yaml](https://github.com/Sommerregen/grav-plugin-mathjax/blob/master/mathjax.yaml)
+  * Add assets (CSS and JS) dynamical to page now
+  * Changed default value `process: false` to `process: true` in [mathjax.yaml](https://github.com/Sommerregen/grav-plugin-mathjax/blob/master/mathjax.yaml)
 
 # v1.1.1
 ## 05/10/2015
 
 1. [](#new)
-	* Support modular pages
-	* Added CSS stylesheet and `built_in_css` option
+  * Support modular pages
+  * Added CSS stylesheet and `built_in_css` option
 2. [](#improved)
   * PSR fixes
 

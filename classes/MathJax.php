@@ -24,7 +24,7 @@ class MathJax
   /**
    * @var MathJax
    */
-	use GravTrait;
+  use GravTrait;
 
   /** ---------------------------
    * Private/protected properties
@@ -36,14 +36,14 @@ class MathJax
    *
    * @var string
    */
-	protected $id;
+  protected $id;
 
   /**
    * A key-valued array used for hashing math formulas of a page
    *
    * @var array
    */
-	protected $hashes;
+  protected $hashes;
 
   /** -------------
    * Public methods
@@ -87,10 +87,10 @@ class MathJax
    *
    * @return string          The processed content
    */
-	public function process($content, $id = null)
+  public function process($content, $id = null)
   {
-		// Set unique identifier based on page content
-		$this->id($id ?: time().md5($content));
+    // Set unique identifier based on page content
+    $this->id($id ?: time().md5($content));
 
     // Reset class hashes before processing
     // $this->reset();
@@ -100,7 +100,7 @@ class MathJax
     $regex['latex-block'] = '~(?<!\\\\)(\$\$)(.+?)\1~msx';
     $regex['latex-inline'] = '~(?<!\\\\)(\$)(.+?)\1~msx';
 
-		// Wrap any text between \[ and \] in display math tags.
+    // Wrap any text between \[ and \] in display math tags.
     $regex['block'] = '~
       ^\\\\         # line starts with a single backslash (double escaping)
       \[            # followed by a square bracket
@@ -126,7 +126,7 @@ class MathJax
       }, $content);
     }
 
-		return $content;
+    return $content;
   }
 
   /**
@@ -205,7 +205,7 @@ class MathJax
    */
   protected function hash($text, $type = '')
   {
-  	static $counter = 0;
+    static $counter = 0;
 
     // Swap back any tag hash found in $text so we do not have to `unhash`
     // multiple times at the end.

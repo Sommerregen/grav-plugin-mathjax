@@ -1,6 +1,6 @@
 <?php
 /**
- * MathJax v1.3.0
+ * MathJax v1.3.1
  *
  * This plugin allows you to include math formulas in your web pages,
  * either using TeX and LaTeX notation, and/or as MathML.
@@ -9,7 +9,7 @@
  * http://benjamin-regler.de/license/
  *
  * @package     MathJax
- * @version     1.3.0
+ * @version     1.3.1
  * @link        <https://github.com/sommerregen/grav-plugin-mathjax>
  * @author      Benjamin Regler <sommerregen@benjamin-regler.de>
  * @copyright   2015, Benjamin Regler
@@ -45,7 +45,7 @@ class MathJaxPlugin extends Plugin
    *
    * @var object
    */
-  protected $backend;
+  protected $mathjax;
 
   /** -------------
    * Public methods
@@ -61,31 +61,30 @@ class MathJaxPlugin extends Plugin
   public static function getSubscribedEvents()
   {
     return [
+      'onPageInitialized' => ['onPageInitialized', 0],
       'onTwigInitialized' => ['onTwigInitialized', 0],
-      'onBuildPagesInitialized' => ['onBuildPagesInitialized', 0],
       'onShortcodesInitialized' => ['onShortcodesInitialized', 0]
     ];
   }
 
   /**
-   * Initialize configuration when building pages.
+   * Initialize configuration
    */
-  public function onBuildPagesInitialized() {
+  public function onPageInitialized() {
     if ($this->isAdmin()) {
       $this->active = false;
       return;
     }
 
     if ($this->config->get('plugins.mathjax.enabled')) {
-      $this->init();
-
       $weight = $this->config->get('plugins.mathjax.weight', -5);
       // Process contents order according to weight option
       // (default: -5): to process page content right after SmartyPants
 
       $this->enable([
         'onPageContentRaw' => ['onPageContentRaw', 0],
-        'onPageContentProcessed' => ['onPageContentProcessed', $weight]
+        'onPageContentProcessed' => ['onPageContentProcessed', $weight],
+        'onTwigSiteVariables' => ['onTwigSiteVariables', 0]
       ]);
     }
   }
@@ -108,7 +107,7 @@ class MathJaxPlugin extends Plugin
 
       // Save modified page content with tokens as placeholders
       $page->setRawContent(
-        $this->backend->process($raw, $page->id())
+        $this->init()->process($raw, $page->id())
       );
     }
   }
@@ -125,11 +124,11 @@ class MathJaxPlugin extends Plugin
     $page = $event['page'];
 
     // Normalize page content, if modified
-    if ($this->backend->modified()) {
+    if ($this->mathjax->modified()) {
       // Get modified content, replace all tokens with their
       // respective formula and write content back to page
       $content = $page->getRawContent();
-      $page->setRawContent($this->backend->normalize($content));
+      $page->setRawContent($this->mathjax->normalize($content));
 
       // Set X-UA-Compatible meta tag for Internet Explorer
       $metadata = $page->metadata();
@@ -217,7 +216,7 @@ class MathJaxPlugin extends Plugin
    */
   public function onShortcodesInitialized(Event $event)
   {
-    $backend = $this->init();
+    $mathjax = $this->init();
     // Register {{% mathjax %}} shortcode
     $event['shortcodes']->register(
       new BlockShortcode('mathjax', function($event) {
@@ -231,7 +230,7 @@ class MathJaxPlugin extends Plugin
           $event['page']->header()->mathjax->process = true;
         }
 
-        return $this->backend->mathjaxShortcode($event);
+        return $this->mathjax->mathjaxShortcode($event);
       })
     );
   }
@@ -248,16 +247,12 @@ class MathJaxPlugin extends Plugin
    */
   protected function init()
   {
-    if (!$this->backend) {
+    if (!$this->mathjax) {
       // Initialize MathJax class
       require_once(__DIR__ . '/classes/MathJax.php');
-      $this->backend = new MathJax();
-
-      $this->enable([
-        'onTwigSiteVariables' => ['onTwigSiteVariables', 0]
-      ]);
+      $this->mathjax = new MathJax();
     }
 
-    return $this->backend;
+    return $this->mathjax;
   }
 }
