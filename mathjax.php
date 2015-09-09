@@ -124,7 +124,7 @@ class MathJaxPlugin extends Plugin
     $page = $event['page'];
 
     // Normalize page content, if modified
-    if ($this->mathjax->modified()) {
+    if ($this->init()->modified()) {
       // Get modified content, replace all tokens with their
       // respective formula and write content back to page
       $content = $page->getRawContent();
