@@ -1,6 +1,6 @@
 # [![Grav MathJax Plugin](assets/logo.png)][project]
 
-[![Release](https://img.shields.io/github/release/sommerregen/grav-plugin-mahtjax.svg)][project] [![Issues](https://img.shields.io/github/issues/sommerregen/grav-plugin-mahtjax.svg)][issues] [![Dual license](https://img.shields.io/badge/dual%20license-MIT%2FGPL-blue.svg)](LICENSE "License") <span style="float:right;">[![Flattr](https://api.flattr.com/button/flattr-badge-large.png)][flattr] [![PayPal](https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif)][paypal]</span>
+[![Release](https://img.shields.io/github/release/sommerregen/grav-plugin-mathjax.svg)][project] [![Issues](https://img.shields.io/github/issues/sommerregen/grav-plugin-mathjax.svg)][issues] [![Dual license](https://img.shields.io/badge/dual%20license-MIT%2FGPL-blue.svg)](LICENSE "License") <span style="float:right;">[![Flattr](https://api.flattr.com/button/flattr-badge-large.png)][flattr] [![PayPal](https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif)][paypal]</span>
 
 > This plugin allows you to include math formulas in your web pages, either using TeX and LaTeX notation, and/or as MathML.
 
@@ -29,7 +29,7 @@ default math delimiters are `$$...$$` and `\\[...\\]` for displayed mathematics,
 
 ## Installation and Updates
 
-Installing or updating the `MathJax` plugin can be done in one of two ways. Using the GPM (Grav Package Manager) installation method or (i.e. `bin/gpm install mathjay`) manual install or update method by downloading [this plugin](https://github.com/sommerregen/grav-plugin-mathjax) and extracting all plugin files to
+Installing or updating the `MathJax` plugin can be done in one of two ways. Using the GPM (Grav Package Manager) installation method or (i.e. `bin/gpm install mathjax`) manual install or update method by downloading [this plugin](https://github.com/sommerregen/grav-plugin-mathjax) and extracting all plugin files to
 
     user/plugins/mathjax
 
