@@ -1,3 +1,9 @@
+# v1.3.2
+## 09/09/2015
+
+3. [](#bugfix)
+  * Call to a member function modified() on a non-object
+
 # v1.3.1
 ## 09/09/2015
 

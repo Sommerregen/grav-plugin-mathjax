@@ -1,6 +1,6 @@
 <?php
 /**
- * MathJax v1.3.1
+ * MathJax v1.3.2
  *
  * This plugin allows you to include math formulas in your web pages,
  * either using TeX and LaTeX notation, and/or as MathML.
@@ -9,7 +9,7 @@
  * http://benjamin-regler.de/license/
  *
  * @package     MathJax
- * @version     1.3.1
+ * @version     1.3.2
  * @link        <https://github.com/sommerregen/grav-plugin-mathjax>
  * @author      Benjamin Regler <sommerregen@benjamin-regler.de>
  * @copyright   2015, Benjamin Regler
@@ -124,7 +124,7 @@ class MathJaxPlugin extends Plugin
     $page = $event['page'];
 
     // Normalize page content, if modified
-    if ($this->mathjax->modified()) {
+    if ($this->init()->modified()) {
       // Get modified content, replace all tokens with their
       // respective formula and write content back to page
       $content = $page->getRawContent();
