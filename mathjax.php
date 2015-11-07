@@ -18,7 +18,7 @@
  */
 
 namespace Grav\Plugin;
-
+use Grav\Common\Data;
 use Grav\Common\Plugin;
 use RocketTheme\Toolbox\Event\Event;
 use Grav\Plugin\Shortcodes\BlockShortcode;
@@ -63,7 +63,8 @@ class MathJaxPlugin extends Plugin
     return [
       'onPageInitialized' => ['onPageInitialized', 0],
       'onTwigInitialized' => ['onTwigInitialized', 0],
-      'onShortcodesInitialized' => ['onShortcodesInitialized', 0]
+      'onShortcodesInitialized' => ['onShortcodesInitialized', 0],
+      'onBlueprintCreated' => ['onBlueprintCreated', 0]
     ];
   }
 
@@ -233,6 +234,23 @@ class MathJaxPlugin extends Plugin
         return $this->mathjax->mathjaxShortcode($event);
       })
     );
+  }
+
+  /**
+   * Extend page blueprints "with mathjax.process" configuration options.
+   *
+   * @param Event $event
+   */
+  public function onBlueprintCreated(Event $event)
+  {
+      $blueprint = $event['blueprint'];
+
+      if ($blueprint->get('form.fields.tabs')) {
+          $blueprints = new Data\Blueprints(__DIR__ . '/blueprints/');
+          $extends = $blueprints->get('mathjax');
+          $blueprint->extend($extends, true);
+      }
+      
   }
 
   /** -------------------------------
