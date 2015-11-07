@@ -1,0 +1,22 @@
+form:
+  fields:
+      tabs:
+        fields:
+          options:
+            type: tab
+            fields:
+              mathjax:
+                type: section
+                title: Mathjax
+                underline: true
+                fields:
+                  header.mathjax.process:
+                    type: toggle
+                    label: Process MathJax
+                    highlight: 1
+                    default: 1
+                    options:
+                      1: Enabled
+                      0: Disabled
+                    validate:
+                      type: bool
