@@ -234,7 +234,7 @@ class MathJax
   protected function unhash($text)
   {
     $pattern = '~mathjax::(.+)::([0-9a-z]+)::([0-9]+)::M~i';
-    $text = preg_replace_callback($pattern, function($atches) {
+    $text = preg_replace_callback($pattern, function($matches) {
       return $this->hashes[$matches[0]];
     }, $text);
 
