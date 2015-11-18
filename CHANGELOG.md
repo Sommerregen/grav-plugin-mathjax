@@ -1,3 +1,14 @@
+# v1.4.0
+## 11/18/2015
+
+1. [](#new)
+  * Added [#3](https://github.com/Sommerregen/grav-plugin-mathjax/pull/3) ("MathJax Process" toggle to page options tab)
+2. [](#improved)
+  * Added Twig filter documentation to `README.md`
+  * Improved code
+3. [](#bugfix)
+  * Fixed `mathjax` Twig filter
+
 # v1.3.2
 ## 09/09/2015
 
