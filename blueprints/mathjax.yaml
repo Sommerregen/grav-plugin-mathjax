@@ -21,7 +21,7 @@ form:
                   type: toggle
                   label: PLUGINS.MATHJAX.PROCESS
                   highlight: 1
-                  default: 1
+                  '@config-default': plugins.mathjax.process
                   options:
                     1: PLUGIN_ADMIN.YES
                     0: PLUGIN_ADMIN.NO
