@@ -18,8 +18,9 @@
  */
 
 namespace Grav\Plugin;
-use Grav\Common\Data;
+
 use Grav\Common\Plugin;
+use Grav\Common\Data\Blueprints;
 use RocketTheme\Toolbox\Event\Event;
 use Grav\Plugin\Shortcodes\BlockShortcode;
 
@@ -63,15 +64,16 @@ class MathJaxPlugin extends Plugin
     return [
       'onPageInitialized' => ['onPageInitialized', 0],
       'onTwigInitialized' => ['onTwigInitialized', 0],
-      'onShortcodesInitialized' => ['onShortcodesInitialized', 0],
-      'onBlueprintCreated' => ['onBlueprintCreated', 0]
+      'onBlueprintCreated' => ['onBlueprintCreated', 0],
+      'onShortcodesInitialized' => ['onShortcodesInitialized', 0]
     ];
   }
 
   /**
    * Initialize configuration
    */
-  public function onPageInitialized() {
+  public function onPageInitialized()
+  {
     if ($this->isAdmin()) {
       $this->active = false;
       return;
@@ -108,7 +110,7 @@ class MathJaxPlugin extends Plugin
 
       // Save modified page content with tokens as placeholders
       $page->setRawContent(
-        $this->init()->process($raw, $page->id())
+        $this->mathjaxFunction($raw, $config->toArray(), $page)
       );
     }
   }
@@ -197,17 +199,20 @@ class MathJaxPlugin extends Plugin
   }
 
   /**
-   * Filter to parse external links.
+   * Filter to parse MathJax formula.
    *
    * @param  string $content The content to be filtered.
-   * @param  array  $options Array of options for the External links filter.
+   * @param  array  $options Array of options for the MathJax formula function.
    *
    * @return string          The filtered content.
    */
-  public function externalLinksFunction($content, $params = [])
+  public function mathjaxFunction($content, $params = [])
   {
-    $config = $this->mergeConfig($this->grav['page'], $params);
-    return $this->init()->process($content, $config);
+    // Get custom user configuration
+    $page = func_num_args() > 2 ? func_get_arg(2) : $this->grav['page'];
+
+    // Render MathJax formula
+    return $this->init()->process($content, $page->id());
   }
 
   /**
@@ -226,7 +231,7 @@ class MathJaxPlugin extends Plugin
           'onPageContentProcessed' => ['onPageContentProcessed', $weight]
         ]);
 
-        // Update header to variable to bypass evaluation
+        // Update header variable to bypass evaluation
         if (isset($event['page']->header()->mathjax->process)){
           $event['page']->header()->mathjax->process = true;
         }
@@ -243,14 +248,13 @@ class MathJaxPlugin extends Plugin
    */
   public function onBlueprintCreated(Event $event)
   {
-      $blueprint = $event['blueprint'];
+    $blueprint = $event['blueprint'];
 
-      if ($blueprint->get('form.fields.tabs')) {
-          $blueprints = new Data\Blueprints(__DIR__ . '/blueprints/');
-          $extends = $blueprints->get('mathjax');
-          $blueprint->extend($extends, true);
-      }
-      
+    if ($blueprint->get('form.fields.tabs')) {
+      $blueprints = new Blueprints(__DIR__ . '/blueprints/');
+      $extends = $blueprints->get($this->name);
+      $blueprint->extend($extends, true);
+    }
   }
 
   /** -------------------------------

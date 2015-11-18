@@ -29,6 +29,7 @@ en:
       PLUGIN_STATUS: "Plugin status"
       BUILTIN_CSS: "Use built in CSS"
       BUILTIN_JS: "Use built in JS"
+      MATHJAX: "MathJax"
 
       WEIGHT: "Order of execution"
       WEIGHT_HELP: "To process the page contents right after *SmartyPants* use negative values."

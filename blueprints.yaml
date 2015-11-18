@@ -34,7 +34,6 @@ form:
         built_in_css:
           type: toggle
           label: PLUGINS.MATHJAX.BUILTIN_CSS
-          highlight: 1
           default: 1
           options:
             1: PLUGIN_ADMIN.YES
@@ -45,7 +44,6 @@ form:
         built_in_js:
           type: toggle
           label: PLUGINS.MATHJAX.BUILTIN_JS
-          highlight: 1
           default: 1
           options:
             1: PLUGIN_ADMIN.YES
@@ -97,7 +95,7 @@ form:
         process:
           type: toggle
           label: PLUGINS.MATHJAX.PROCESS
-          default: 0
+          default: 1
           options:
             1: PLUGIN_ADMIN.YES
             0: PLUGIN_ADMIN.NO
