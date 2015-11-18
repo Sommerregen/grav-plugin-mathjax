@@ -73,24 +73,25 @@ class MathJax
     if (isset($tags[$type])) {
       // Wrap text in display math tags
       list($pre, $post) = $tags[$type];
-      $body = $pre.$body.$post;
+      $body = $pre . $body . $post;
 
-      return $this->process($body);
+      return $this->render($body, $event['options'], $event['page']);
     }
   }
 
   /**
-   * Process contents i.e. replace all math formulas by a (unique) hash
+   * Process contents i.e. apply filer to the content.
    *
-   * @param  string $content The content to be processed
-   * @param  string $id      An id to be incorporated into all replacements.
+   * @param  string     $content The content to render.
+   * @param  array      $options Options to be passed to the renderer.
+   * @param  null|Page  $page    Null or an instance of \Grav\Common\Page.
    *
-   * @return string          The processed content
+   * @return string              The rendered contents.
    */
-  public function process($content, $id = null)
+  public function render($content, $options = [], $page = null)
   {
     // Set unique identifier based on page content
-    $this->id($id ?: time().md5($content));
+    $this->id($page->id() ?: time() . md5($content));
 
     // Reset class hashes before processing
     // $this->reset();

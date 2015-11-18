@@ -21,8 +21,9 @@ namespace Grav\Plugin;
 
 use Grav\Common\Plugin;
 use Grav\Common\Data\Blueprints;
-use RocketTheme\Toolbox\Event\Event;
 use Grav\Plugin\Shortcodes\BlockShortcode;
+
+use RocketTheme\Toolbox\Event\Event;
 
 /**
  * MathJax Plugin
@@ -62,33 +63,55 @@ class MathJaxPlugin extends Plugin
   public static function getSubscribedEvents()
   {
     return [
-      'onPageInitialized' => ['onPageInitialized', 0],
-      'onTwigInitialized' => ['onTwigInitialized', 0],
-      'onBlueprintCreated' => ['onBlueprintCreated', 0],
-      'onShortcodesInitialized' => ['onShortcodesInitialized', 0]
+      'onPluginsInitialized' => ['onPluginsInitialized', 0]
     ];
   }
 
   /**
    * Initialize configuration
    */
-  public function onPageInitialized()
+  public function onPluginsInitialized()
   {
-    if ($this->isAdmin()) {
-      $this->active = false;
-      return;
-    }
-
     if ($this->config->get('plugins.mathjax.enabled')) {
-      $weight = $this->config->get('plugins.mathjax.weight', -5);
       // Process contents order according to weight option
       // (default: -5): to process page content right after SmartyPants
+      $weight = $this->config->get('plugins.mathjax.weight', -5);
 
-      $this->enable([
+      // Set default events
+      $events = [
         'onPageContentRaw' => ['onPageContentRaw', 0],
         'onPageContentProcessed' => ['onPageContentProcessed', $weight],
-        'onTwigSiteVariables' => ['onTwigSiteVariables', 0]
-      ]);
+        'onTwigInitialized' => ['onTwigInitialized', 0],
+        'onTwigSiteVariables' => ['onTwigSiteVariables', 0],
+        'onShortcodesInitialized' => ['onShortcodesInitialized', 0]
+      ];
+
+      // Set admin specific events
+      if ($this->isAdmin()) {
+        $this->active = false;
+        $events = [
+          'onBlueprintCreated' => ['onBlueprintCreated', 0]
+        ];
+      }
+
+      // Register events
+      $this->enable($events);
+    }
+  }
+
+  /**
+   * Extend page blueprints with mathjax configuration options.
+   *
+   * @param Event $event
+   */
+  public function onBlueprintCreated(Event $event)
+  {
+    /** @var Blueprints $blueprint */
+    $blueprint = $event['blueprint'];
+    if ($blueprint->get('form.fields.tabs')) {
+      $blueprints = new Blueprints(__DIR__ . '/blueprints/');
+      $extends = $blueprints->get($this->name);
+      $blueprint->extend($extends, true);
     }
   }
 
@@ -110,7 +133,7 @@ class MathJaxPlugin extends Plugin
 
       // Save modified page content with tokens as placeholders
       $page->setRawContent(
-        $this->mathjaxFunction($raw, $config->toArray(), $page)
+        $this->mathjaxFilter($raw, $config->toArray(), $page)
       );
     }
   }
@@ -127,11 +150,12 @@ class MathJaxPlugin extends Plugin
     $page = $event['page'];
 
     // Normalize page content, if modified
-    if ($this->init()->modified()) {
+    $mathjax = $this->init();
+    if ($mathjax->modified()) {
       // Get modified content, replace all tokens with their
       // respective formula and write content back to page
       $content = $page->getRawContent();
-      $page->setRawContent($this->mathjax->normalize($content));
+      $page->setRawContent($mathjax->normalize($content));
 
       // Set X-UA-Compatible meta tag for Internet Explorer
       $metadata = $page->metadata();
@@ -149,8 +173,8 @@ class MathJaxPlugin extends Plugin
   public function onTwigInitialized()
   {
     // Expose function
-    $this->grav['twig']->twig()->addFunction(
-      new \Twig_SimpleFunction('mathjax', [$this, 'mathjaxFunction'], ['is_safe' => ['html']])
+    $this->grav['twig']->twig()->addFilter(
+      new \Twig_SimpleFilter('mathjax', [$this, 'mathjaxFilter'], ['is_safe' => ['html']])
     );
   }
 
@@ -185,7 +209,7 @@ class MathJaxPlugin extends Plugin
     $data_path = $grav['locator']->findResource('user://data');
 
     // Check if MathJax library was properly installed locally
-    $installed = file_exists($data_path.DS.'mathjax'.DS.'MathJax.js');
+    $installed = file_exists($data_path . DS .'mathjax' . DS . 'MathJax.js');
 
     // Load MathJax library
     if ($this->config->get('plugins.mathjax.CDN.enabled') || !$installed) {
@@ -194,7 +218,7 @@ class MathJaxPlugin extends Plugin
       $grav['assets']->add($cdn_url);
     } elseif ($installed) {
       // Load MathJax library from user data path
-      $grav['assets']->add('user://data'.DS.'mathjax'.DS.'MathJax.js');
+      $grav['assets']->add('user://data/mathjax/MathJax.js');
     }
   }
 
@@ -202,17 +226,33 @@ class MathJaxPlugin extends Plugin
    * Filter to parse MathJax formula.
    *
    * @param  string $content The content to be filtered.
-   * @param  array  $options Array of options for the MathJax formula function.
+   * @param  array  $options Array of options for the MathJax formula filter.
    *
    * @return string          The filtered content.
    */
-  public function mathjaxFunction($content, $params = [])
+  public function mathjaxFilter($content, $params = [])
   {
     // Get custom user configuration
     $page = func_num_args() > 2 ? func_get_arg(2) : $this->grav['page'];
+    $config = $this->mergeConfig($page, true, $params);
 
-    // Render MathJax formula
-    return $this->init()->process($content, $page->id());
+    // Render
+    $content = $this->init()->render($content, $config, $page);
+
+    // Post-process contents
+    if (func_num_args() < 3) {
+      $content = $this->init()->normalize($content);
+
+      // Set X-UA-Compatible meta tag for Internet Explorer
+      $metadata = $page->metadata();
+      $metadata['X-UA-Compatible'] = array(
+        'http_equiv' => 'X-UA-Compatible',
+        'content' => 'IE=edge'
+      );
+      $page->metadata($metadata);
+    }
+
+    return $content;
   }
 
   /**
@@ -239,22 +279,6 @@ class MathJaxPlugin extends Plugin
         return $this->mathjax->mathjaxShortcode($event);
       })
     );
-  }
-
-  /**
-   * Extend page blueprints "with mathjax.process" configuration options.
-   *
-   * @param Event $event
-   */
-  public function onBlueprintCreated(Event $event)
-  {
-    $blueprint = $event['blueprint'];
-
-    if ($blueprint->get('form.fields.tabs')) {
-      $blueprints = new Blueprints(__DIR__ . '/blueprints/');
-      $extends = $blueprints->get($this->name);
-      $blueprint->extend($extends, true);
-    }
   }
 
   /** -------------------------------
