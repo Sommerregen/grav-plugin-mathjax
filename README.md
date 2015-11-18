@@ -11,7 +11,7 @@
     * [CSS Stylesheet Override](#css-stylesheet-override)
     * [JavaScript Override](#javascript-override)
 * [Contributing](#contributing)
-* [Licencse](#license)
+* [License](#license)
 
 ## About
 
