@@ -10,6 +10,7 @@
     * [Example](#example)
     * [CSS Stylesheet Override](#css-stylesheet-override)
     * [JavaScript Override](#javascript-override)
+    * [Twig Filter](#twig-filter)
 * [Contributing](#contributing)
 * [License](#license)
 
@@ -17,13 +18,11 @@
 
 `MathJax` is a plugin for [**Grav**](http://getgrav.org) and integrates the [MathJax library](http://www.mathjax.org/), a modern JavaScript-based LaTeX rendering solution for the Internet, into the site.
 
-By default, MathJax source is loaded automatically from the Internet using the
-MathJax Content Delivery Network (CDN). This is a light-weight, "out-of-the-box" LaTeX rendering solution and you can still use a custom configuration if you need.
+By default, MathJax source is loaded automatically from the Internet using the MathJax Content Delivery Network (CDN). This is a light-weight, "out-of-the-box" LaTeX rendering solution and you can still use a custom configuration if you need.
 
 Alternatively, you can host the MathJax library (approximately _150MB_) on your server located in your `user/data/mathjax` folder.
 
-MathJax then renders mathematics inside the default delimiters. The
-default math delimiters are `$$...$$` and `\\[...\\]` for displayed mathematics, and `$...$` and `\\(...\\)` for inline mathematics. An example can be seen below:
+MathJax then renders mathematics inside the default delimiters. The default math delimiters are `$$...$$` and `\\[...\\]` for displayed mathematics, and `$...$` and `\\(...\\)` for inline mathematics. An example can be seen below:
 
 ![Screenshot MathJax Plugin](assets/screenshot.png "MathJax Preview")
 
@@ -118,7 +117,7 @@ The `MathJax` plugin allows you to either use the MathJax CDN (recommended) or t
 
   1. Download the latest MathJax release from https://github.com/mathjax/mathjax.
   2. Extract the contents to your Grav `user/data/mathjax` folder and make sure that the file `mathjax.js` is present in the above folder (and not in any sub-folders).
-  3. Copy the [mathjax.yaml](mathjax.yaml) file into your `users/config/plugins/` folder (create it if it doesn't exist), and finally set `CDN: enabled: false`.
+  3. Copy the [mathjax.yaml](mathjax.yaml) file into your `users/config/plugins/` folder (create it if it doesn't exist), and finally set `CDN.enabled: false`.
 
 ### CSS Stylesheet Override
 
@@ -154,6 +153,14 @@ window.MathJax = {
   }
 };
 
+```
+
+### Twig Filter
+
+`MathJax` provides a Twig filter to process MathJax inside contents. To do that, place the following line of code in the theme file you wish to add the `MathJax` plugin for:
+
+```
+{{ page.content|mathjax }}
 ```
 
 ## Contributing
