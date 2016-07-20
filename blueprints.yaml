@@ -89,7 +89,7 @@ form:
           placeholder: https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
           help: PLUGINS.MATHJAX.CDN.URL_HELP
 
-  # Global and page specific configurations
+    # Global and page specific configurations
     specific:
       type: section
       title: PLUGINS.MATHJAX.SPECIFIC_CONFIG
