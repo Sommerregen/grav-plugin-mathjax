@@ -100,7 +100,7 @@ class MathJaxPlugin extends Plugin
   }
 
   /**
-   * Extend page blueprints with mathjax configuration options.
+   * Extend page blueprints with MathJax configuration options.
    *
    * @param Event $event
    */
@@ -108,7 +108,8 @@ class MathJaxPlugin extends Plugin
   {
     /** @var Blueprints $blueprint */
     $blueprint = $event['blueprint'];
-    if ($blueprint->get('form.fields.tabs')) {
+
+    if ($blueprint->get('form/fields/tabs')) {
       $blueprints = new Blueprints(__DIR__ . '/blueprints/');
       $extends = $blueprints->get($this->name);
       $blueprint->extend($extends, true);
