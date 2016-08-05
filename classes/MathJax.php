@@ -19,6 +19,13 @@ use RocketTheme\Toolbox\Event\Event;
 class MathJax
 {
     /**
+     * Markdown instance.
+     *
+     * @var \Grav\Common\Parseown\Parsedown
+     */
+    protected $markdown;
+
+    /**
      * A unique identifier
      *
      * @var string
@@ -31,6 +38,22 @@ class MathJax
      * @var array
      */
     protected $hashes;
+
+    /**
+     * A list of delimiters used to mark LaTeX formula.
+     *
+     * @var array
+     */
+    protected $delimiters = [
+        'block'  => [
+            '$' => ['$$', '$$'],
+            '\\' => ['\\[', '\\]']
+        ],
+        'inline' => [
+            '$' => ['$', '$'],
+            '\\' => ['\\(', '\\)']
+        ]
+    ];
 
     /**
      * MathJax shortcode
@@ -62,6 +85,115 @@ class MathJax
     }
 
     /**
+     * Setup the markdown parser to handle LaTeX formula properly.
+     *
+     * @param  mixed $markdown The markdown parser object
+     */
+    public function setupMarkdown($markdown)
+    {
+        /**
+         * Markdown blocks
+         */
+
+        // Add Latex block environment to Markdown parser
+        $this->markdown = $markdown;
+        foreach ($this->delimiters['block'] as $marker => $delimiters) {
+            list($start, $end) = $delimiters;
+            $markdown->addBlockType($start[0], 'Latex', true, true);
+        }
+
+        $markdown->blockLatex = function($line, $block = null)
+        {
+            $delimiters = [];
+            foreach ($this->delimiters['block'] as $marker => $delims) {
+                $delimiters[] = preg_quote($delims[0]);
+            }
+
+            $delimiters = implode('|', $delimiters);
+            if (preg_match('/^(' . $delimiters . ')[ ]*$/', $line['text'], $matches)) {
+                $block = [
+                    'start' => $matches[1],
+                    'end' => $this->delimiters['block'][$matches[1]{0}][1],
+                    'element' => [
+                        'name' => 'p',
+                        'attributes' => [
+                            'class' => 'mathjax mathjax--block'
+                        ],
+                        'text' => [],
+                    ]
+                ];
+
+                return $block;
+            }
+        };
+
+        $markdown->blockLatexContinue = function($line, $block)
+        {
+            if (isset($block['complete'])) {
+                return;
+            }
+
+            if (preg_match('/^'. preg_quote($block['end']) . '[ ]*$/', $line['text'])) {
+                $block['complete'] = true;
+                return $block;
+            }
+
+            $block['element']['text'][] = $line['body'];
+            return $block;
+        };
+
+        $markdown->blockLatexComplete = function($block)
+        {
+            $text = $block['start'] . "\n";
+            $text .= implode("\n", $block['element']['text']);
+            $text .= $block['end'];
+
+            $this->id(time() . md5($text));
+            $block['element']['text'] = $text;
+            $block['markup'] = $this->hash($block['element'], $text);
+            return $block;
+        };
+
+        /**
+         * Markdown inline
+         */
+
+        // Add Latex inline environment to Markdown parser
+        $map = ['\\' => 0];
+        foreach ($this->delimiters['inline'] as $marker => $delimiters) {
+            $index = array_key_exists($marker, $map) ? $map[$marker] : null;
+            $markdown->addInlineType($marker, 'Latex', $index);
+        }
+
+        $markdown->inlineLatex = function($excerpt)
+        {
+            $marker = $excerpt['text'][0];
+            list($start, $end) = array_map('preg_quote', $this->delimiters['inline'][$marker]);
+            if (preg_match('/(' . $start . ')[ ]*(.+?)[ ]*(' . $end . ')/s', $excerpt['text'], $matches))
+            {
+                $text = preg_replace("/[\pZ\pC]+/u", ' ', $matches[0]);
+                $block = [
+                    'extent' => strlen($matches[0]),
+                    'start' => $matches[1],
+                    'end' => $matches[3],
+                    'element' => [
+                        'name' => 'span',
+                        'attributes' => [
+                            'class' => 'mathjax mathjax--inline'
+                        ],
+                        'text' => $text
+                    ]
+                ];
+
+                $this->id(time() . md5($text));
+                $block['element']['text'] = $text;
+                $block['markup'] = $this->hash($block['element'], $text);
+                return $block;
+            }
+        };
+    }
+
+    /**
      * Process contents i.e. apply filer to the content.
      *
      * @param  string     $content The content to render.
@@ -74,42 +206,7 @@ class MathJax
     {
         // Set unique identifier based on page content
         $this->id($page->id() ?: time() . md5($content));
-
-        // Reset class hashes before processing
-        // $this->reset();
-
-        $regex = [];
-        // Wrap any text between $ ... $ or $$ ... $$ in display math tags.
-        $regex['latex-block'] = '~(?<!\\\\)(\$\$)(.+?)\1~msx';
-        $regex['latex-inline'] = '~(?<!\\\\)(\$)(.+?)\1~msx';
-
-        // Wrap any text between \[ and \] in display math tags.
-        $regex['block'] = '~
-            ^\\\\         # line starts with a single backslash (double escaping)
-            \[            # followed by a square bracket
-            (.+)          # then the actual LaTeX code
-            \\\\          # followed by another backslash
-            \]            # and closing bracket
-            \s*$          # and maybe some whitespace before the end of the line
-            ~msxUX';
-
-        // Wrap any text between \( and \) in display math tags.
-        $regex['inline'] = '~
-            \\\\          # line starts with a single backslash (double escaping)
-            \(            # followed by a left parenthesis
-            (.+)          # then the actual LaTeX code
-            \\\\          # followed by another backslash
-            \)            # and a right parenthesis
-            ~msxUX';
-
-        // Replace all math formulas by a (unique) hash
-        foreach ($regex as $key => $re) {
-            $content = preg_replace_callback($re, function($matches) use ($key) {
-                return $this->hash(trim($matches[0]), $key);
-            }, $content);
-        }
-
-        return $content;
+        return $this->markdown->text($content);
     }
 
     /**
@@ -120,10 +217,10 @@ class MathJax
      *
      * @return string          The processed content
      */
-    public function normalize($content)
+    public function normalize($content, $type = 'html')
     {
         $hashes = array_keys($this->hashes);
-        $text = array_values($this->hashes);
+        $text = array_column(array_values($this->hashes), $type);
 
         // Fast replace hashes with their corresponding math formula
         $content = str_replace($hashes, $text, $content);
@@ -173,49 +270,28 @@ class MathJax
      * Called whenever a tag must be hashed when a function insert an
      * atomic element in the text stream. Passing $text to through this
      * function gives a unique text-token which will be reverted back when
-     * calling unhash.
+     * calling normalize.
      *
      * @param  string $text The text to be hashed
      * @param  string $type The type (category) the text should be saved
      *
      * @return string       Return a unique text-token which will be
-     *                      reverted back when calling unhash.
+     *                      reverted back when calling normalize.
      */
-    protected function hash($text, $type = '')
+    protected function hash($block, $text = '')
     {
         static $counter = 0;
 
-        // Swap back any tag hash found in $text so we do not have to `unhash`
-        // multiple times at the end.
-        $text = $this->unhash($text);
-
-        // Then hash the block
-        $key = implode('::', array('mathjax', $type, $this->id, ++$counter, 'M'));
-
-        // Wrap and add class to formula
-        $inline = (strpos($type, 'inline') !== false) ? 'inline' : 'block';
-        $text = '<span class="mathjax '.$inline.'">'.$text.'</span>';
-
-        $this->hashes[$key] = $text;
-
         // String that will replace the tag
+        $key = implode('::', array('mathjax', $this->id(), ++$counter, 'M'));
+
+        // Render markdown block
+        $html = $this->markdown->elementToHtml($block);
+        $this->hashes[$key] = [
+            'raw' => $text,
+            'html' => $html
+        ];
+
         return $key;
-    }
-
-    /**
-     * Swap back in all the tags hashed by hash.
-     *
-     * @param  string $text The text to be un-hashed
-     *
-     * @return string       A text containing no hash inside
-     */
-    protected function unhash($text)
-    {
-        $pattern = '~mathjax::(.+)::([0-9a-z]+)::([0-9]+)::M~i';
-        $text = preg_replace_callback($pattern, function($matches) {
-          return $this->hashes[$matches[0]];
-        }, $text);
-
-        return $text;
     }
 }

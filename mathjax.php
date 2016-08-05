@@ -71,11 +71,11 @@ class MathJaxPlugin extends Plugin
 
         // Register events
         $this->enable([
-            'onPageContentRaw' => ['onPageContentRaw', 0],
+            'onShortcodesInitialized' => ['onShortcodesInitialized', 0],
+            'onMarkdownInitialized' => ['onMarkdownInitialized', 0],
             'onPageContentProcessed' => ['onPageContentProcessed', $weight],
             'onTwigInitialized' => ['onTwigInitialized', 0],
-            'onTwigSiteVariables' => ['onTwigSiteVariables', 0],
-            'onShortcodesInitialized' => ['onShortcodesInitialized', 0]
+            'onTwigSiteVariables' => ['onTwigSiteVariables', 0]
         ]);
     }
 
@@ -94,6 +94,18 @@ class MathJaxPlugin extends Plugin
             $extends = $blueprints->get($this->name);
             $blueprint->extend($extends, true);
         }
+    }
+
+    /**
+     * Handle the markdown initialized event.
+     *
+     * @param  Event  $event The event containing the markdown parser
+     */
+    public function onMarkdownInitialized(Event $event)
+    {
+        /** @var Grav\Common\Markdown\Parsedownextra $markdown */
+        $markdown = $event['markdown'];
+        $this->init()->setupMarkdown($markdown);
     }
 
     /**
@@ -130,14 +142,16 @@ class MathJaxPlugin extends Plugin
         // Get the page header
         $page = $event['page'];
 
-        // Normalize page content, if modified
-        $mathjax = $this->init();
-        if ($mathjax->modified()) {
-            // Get modified content, replace all tokens with their
-            // respective formula and write content back to page
-            $content = $page->getRawContent();
-            $page->setRawContent($mathjax->normalize($content));
+        $config = $this->mergeConfig($page);
+        $enabled = ($config->get('enabled') && $config->get('process')) ? true : false;
 
+        // Get modified content, replace all tokens with their
+        // respective formula and write content back to page
+        $original = $page->getRawContent();
+        $modified = $this->init()->normalize($original, $enabled ? 'html' : 'raw');
+        $page->setRawContent($modified);
+
+        if ($original != $modified) {
             // Set X-UA-Compatible meta tag for Internet Explorer
             $metadata = $page->metadata();
             $metadata['X-UA-Compatible'] = array(
@@ -218,22 +232,9 @@ class MathJaxPlugin extends Plugin
         $config = $this->mergeConfig($page, true, $params);
 
         // Render
-        $content = $this->init()->render($content, $config, $page);
-
-        // Post-process contents
-        if (func_num_args() < 3) {
-            $content = $this->init()->normalize($content);
-
-            // Set X-UA-Compatible meta tag for Internet Explorer
-            $metadata = $page->metadata();
-            $metadata['X-UA-Compatible'] = array(
-                'http_equiv' => 'X-UA-Compatible',
-                'content' => 'IE=edge'
-            );
-            $page->metadata($metadata);
-        }
-
-        return $content;
+        $mathjax = $this->init();
+        $content = $mathjax->render($content, $config, $page);
+        return $mathjax->normalize($content);
     }
 
     /**
