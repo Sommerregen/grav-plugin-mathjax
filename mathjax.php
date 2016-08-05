@@ -34,7 +34,7 @@ class MathJaxPlugin extends Plugin
     /**
      * Instance of MathJax class
      *
-     * @var object
+     * @var Grav\Plugin\MathJax
      */
     protected $mathjax;
 
@@ -56,31 +56,27 @@ class MathJaxPlugin extends Plugin
      */
     public function onPluginsInitialized()
     {
-        if ($this->config->get('plugins.mathjax.enabled')) {
-            // Process contents order according to weight option
-            // (default: -5): to process page content right after SmartyPants
-            $weight = $this->config->get('plugins.mathjax.weight', -5);
-
-            // Set default events
-            $events = [
-              'onPageContentRaw' => ['onPageContentRaw', 0],
-                'onPageContentProcessed' => ['onPageContentProcessed', $weight],
-                'onTwigInitialized' => ['onTwigInitialized', 0],
-                'onTwigSiteVariables' => ['onTwigSiteVariables', 0],
-                'onShortcodesInitialized' => ['onShortcodesInitialized', 0]
-            ];
-
-            // Set admin specific events
-            if ($this->isAdmin()) {
-                $this->active = false;
-                $events = [
-                    'onBlueprintCreated' => ['onBlueprintCreated', 0]
-                ];
-            }
-
-            // Register events
-            $this->enable($events);
+        // Set admin specific events
+        if ($this->isAdmin()) {
+            $this->active = false;
+            $this->enable([
+                'onBlueprintCreated' => ['onBlueprintCreated', 0]
+            ]);
+            return;
         }
+
+        // Process contents order according to weight option
+        // (default: -5): to process page content right after SmartyPants
+        $weight = $this->config->get('plugins.mathjax.weight', -5);
+
+        // Register events
+        $this->enable([
+            'onPageContentRaw' => ['onPageContentRaw', 0],
+            'onPageContentProcessed' => ['onPageContentProcessed', $weight],
+            'onTwigInitialized' => ['onTwigInitialized', 0],
+            'onTwigSiteVariables' => ['onTwigSiteVariables', 0],
+            'onShortcodesInitialized' => ['onShortcodesInitialized', 0]
+        ]);
     }
 
     /**
@@ -168,30 +164,30 @@ class MathJaxPlugin extends Plugin
      */
     public function onTwigSiteVariables()
     {
-        /** @var \Grav\Common\Grav $grav */
-        $grav = $this->grav;
+        /** @var \Grav\Common\Assets $assets */
+        $assets = $this->grav['assets'];
 
         /** @var Page $page */
-        $page = $grav['page'];
-        $config = $this->mergeConfig($page);
+        $page = $this->grav['page'];
 
         // Skip if process is set to false
+        $config = $this->mergeConfig($page);
         if (!$config->get('process', false)) {
             return;
         }
 
         // Add MathJax stylesheet to page
         if ($this->config->get('plugins.mathjax.built_in_css')) {
-            $grav['assets']->add('plugin://mathjax/assets/css/mathjax.css');
+            $assets->add('plugins://mathjax/assets/css/mathjax.css');
         }
 
         // Add MathJax configuration file to page
         if ($this->config->get('plugins.mathjax.built_in_js')) {
-            $grav['assets']->add('plugin://mathjax/assets/js/mathjax.js');
+            $assets->add('plugins://mathjax/assets/js/mathjax.js');
         }
 
         // Resolve user data path
-        $data_path = $grav['locator']->findResource('user://data');
+        $data_path = $this->grav['locator']->findResource('user://data');
 
         // Check if MathJax library was properly installed locally
         $installed = file_exists($data_path . DS .'mathjax' . DS . 'MathJax.js');
@@ -200,10 +196,10 @@ class MathJaxPlugin extends Plugin
         if ($this->config->get('plugins.mathjax.CDN.enabled') || !$installed) {
             // Load MathJax library via CDN
             $cdn_url = $this->config->get('plugins.mathjax.CDN.url');
-            $grav['assets']->add($cdn_url);
+            $assets->add($cdn_url);
         } elseif ($installed) {
             // Load MathJax library from user data path
-            $grav['assets']->add('user://data/mathjax/MathJax.js');
+            $assets->add('user://data/mathjax/MathJax.js');
         }
     }
 

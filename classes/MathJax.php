@@ -10,22 +10,14 @@
 
 namespace Grav\Plugin;
 
-use Grav\Common\GravTrait;
 use RocketTheme\Toolbox\Event\Event;
 
 /**
- * MathJax
- *
- * Helper class to include math formulas in your web pages, either using
- * TeX and LaTeX notation, and/or as MathML.
+ * Class MathJax
+ * @package Grav\Plugin\MathJax
  */
 class MathJax
 {
-    /**
-     * @var MathJax
-     */
-    use GravTrait;
-
     /**
      * A unique identifier
      *
@@ -39,11 +31,6 @@ class MathJax
      * @var array
      */
     protected $hashes;
-
-    /** -------------
-     * Public methods
-     * --------------
-     */
 
     /**
      * MathJax shortcode
