@@ -1,5 +1,6 @@
 name: MathJax
-version: 1.4.0
+version: 1.5.0-beta.1
+testing: true
 description: "This plugin allows you to include math formulas in your web pages, either using TeX and LaTeX notation, and/or as MathML."
 icon: subscript
 author:

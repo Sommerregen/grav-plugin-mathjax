@@ -1,3 +1,11 @@
+# v1.5.0-beta.1
+## 08/07/2016
+
+2. [](#improved)
+  * Refactored code (requires **Grav v1.1.0+**)
+3. [](#bugfix)
+  * Use more robust MarkdownParser instead of regexes (fixes [#4](https://github.com/Sommerregen/grav-plugin-mathjax/issues/4))
+
 # v1.4.0
 ## 11/18/2015
 
