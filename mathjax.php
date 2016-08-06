@@ -65,6 +65,10 @@ class MathJaxPlugin extends Plugin
             return;
         }
 
+        // Initialize MathJax class
+        require_once(__DIR__ . '/classes/MathJax.php');
+        $this->mathjax = new MathJax();
+
         // Process contents order according to weight option
         // (default: -5): to process page content right after SmartyPants
         $weight = $this->config->get('plugins.mathjax.weight', -5);
@@ -73,6 +77,7 @@ class MathJaxPlugin extends Plugin
         $this->enable([
             'onShortcodesInitialized' => ['onShortcodesInitialized', 0],
             'onMarkdownInitialized' => ['onMarkdownInitialized', 0],
+            'onPageContentRaw' => ['onPageContentRaw', 0],
             'onPageContentProcessed' => ['onPageContentProcessed', $weight],
             'onTwigInitialized' => ['onTwigInitialized', 0],
             'onTwigSiteVariables' => ['onTwigSiteVariables', 0]
@@ -105,7 +110,7 @@ class MathJaxPlugin extends Plugin
     {
         /** @var Grav\Common\Markdown\Parsedownextra $markdown */
         $markdown = $event['markdown'];
-        $this->init()->setupMarkdown($markdown);
+        $this->mathjax->setupMarkdown($markdown);
     }
 
     /**
@@ -118,16 +123,19 @@ class MathJaxPlugin extends Plugin
     {
         /** @var Page $page */
         $page = $event['page'];
+
         $config = $this->mergeConfig($page);
+        $enabled = ($config->get('enabled') && $config->get('active')) ? true : false;
 
-        if ($config->get('process', false)) {
-            // Get raw content and substitute all formulas by a unique token
-            $raw = $page->getRawContent();
-
-            // Save modified page content with tokens as placeholders
-            $page->setRawContent(
-                $this->mathjaxFilter($raw, $config->toArray(), $page)
+        $this->mathjax->enabled($enabled);
+        if ($enabled) {
+            // Set X-UA-Compatible meta tag for Internet Explorer
+            $metadata = $page->metadata();
+            $metadata['X-UA-Compatible'] = array(
+              'http_equiv' => 'X-UA-Compatible',
+              'content' => 'IE=edge'
             );
+            $page->metadata($metadata);
         }
     }
 
@@ -143,23 +151,13 @@ class MathJaxPlugin extends Plugin
         $page = $event['page'];
 
         $config = $this->mergeConfig($page);
-        $enabled = ($config->get('enabled') && $config->get('process')) ? true : false;
+        $enabled = ($config->get('enabled') && $config->get('active')) ? true : false;
 
         // Get modified content, replace all tokens with their
         // respective formula and write content back to page
-        $original = $page->getRawContent();
-        $modified = $this->init()->normalize($original, $enabled ? 'html' : 'raw');
-        $page->setRawContent($modified);
-
-        if ($original != $modified) {
-            // Set X-UA-Compatible meta tag for Internet Explorer
-            $metadata = $page->metadata();
-            $metadata['X-UA-Compatible'] = array(
-              'http_equiv' => 'X-UA-Compatible',
-              'content' => 'IE=edge'
-            );
-            $page->metadata($metadata);
-        }
+        $type = $enabled ? 'html' : 'raw';
+        $content = $page->getRawContent();
+        $page->setRawContent($this->mathjax->normalize($content, $type));
     }
 
     /**
@@ -184,9 +182,9 @@ class MathJaxPlugin extends Plugin
         /** @var Page $page */
         $page = $this->grav['page'];
 
-        // Skip if process is set to false
+        // Skip if active is set to false
         $config = $this->mergeConfig($page);
-        if (!$config->get('process', false)) {
+        if (!($config->get('enabled') && $config->get('active'))) {
             return;
         }
 
@@ -232,9 +230,8 @@ class MathJaxPlugin extends Plugin
         $config = $this->mergeConfig($page, true, $params);
 
         // Render
-        $mathjax = $this->init();
-        $content = $mathjax->render($content, $config, $page);
-        return $mathjax->normalize($content);
+        $content = $this->mathjax->render($content, $config, $page);
+        return $this->mathjax->normalize($content);
     }
 
     /**
@@ -244,7 +241,6 @@ class MathJaxPlugin extends Plugin
      */
     public function onShortcodesInitialized(Event $event)
     {
-      $mathjax = $this->init();
         // Register {{% mathjax %}} shortcode
         $event['shortcodes']->register(
             new BlockShortcode('mathjax', function($event) {
@@ -261,21 +257,5 @@ class MathJaxPlugin extends Plugin
                 return $this->mathjax->mathjaxShortcode($event);
             })
         );
-    }
-
-    /**
-     * Initialize plugin and all dependencies.
-     *
-     * @return \Grav\Plugin\ExternalLinks   Returns ExternalLinks instance.
-     */
-    protected function init()
-    {
-        if (!$this->mathjax) {
-            // Initialize MathJax class
-            require_once(__DIR__ . '/classes/MathJax.php');
-            $this->mathjax = new MathJax();
-        }
-
-        return $this->mathjax;
     }
 }

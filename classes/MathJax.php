@@ -40,6 +40,13 @@ class MathJax
     protected $hashes = [];
 
     /**
+     * Toggle to enabled or disable MathJax parsing
+     *
+     * @var bool
+     */
+    protected $enabled = true;
+
+    /**
      * A list of delimiters used to mark LaTeX formula.
      *
      * @var array
@@ -56,141 +63,19 @@ class MathJax
     ];
 
     /**
-     * MathJax shortcode
+     * Enable or disable MathJax parsing or get the state.
      *
-     * @param  Event  $event An event object.
-     * @return string        The parsed shortcode.
+     * @param  bool $enable TRUE to enable this plugin per page, FALSE
+     *                      otherwise.
+     * @return bool         Return the active state of the plugin
      */
-    public function mathjaxShortcode(Event $event)
+    public function enabled($enable = null)
     {
-        /* @var \Grav\Common\Data\Data $options */
-        $options = $event['options'];
-
-        $body = trim($event['body']);
-        $type = $options->get('type', 'block');
-
-        // Setup tags to parse
-        $tags = [
-          'block' => ['\[', '\]'],
-          'inline' => ['\(', '\)']
-        ];
-
-        if (isset($tags[$type])) {
-            // Wrap text in display math tags
-            list($pre, $post) = $tags[$type];
-            $body = $pre . $body . $post;
-
-            return $this->render($body, $event['options'], $event['page']);
-        }
-    }
-
-    /**
-     * Setup the markdown parser to handle LaTeX formula properly.
-     *
-     * @param  mixed $markdown The markdown parser object
-     */
-    public function setupMarkdown($markdown)
-    {
-        /**
-         * Markdown blocks
-         */
-
-        // Add Latex block environment to Markdown parser
-        $this->markdown = $markdown;
-        foreach ($this->delimiters['block'] as $marker => $delimiters) {
-            list($start, $end) = $delimiters;
-            $markdown->addBlockType($start[0], 'Latex', true, true);
+        if (is_bool($enable)) {
+            $this->enabled = (bool) $enable;
         }
 
-        $markdown->blockLatex = function($line, $block = null)
-        {
-            $delimiters = [];
-            foreach ($this->delimiters['block'] as $marker => $delims) {
-                $delimiters[] = preg_quote($delims[0]);
-            }
-
-            $delimiters = implode('|', $delimiters);
-            if (preg_match('/^(' . $delimiters . ')[ ]*$/', $line['text'], $matches)) {
-                $block = [
-                    'start' => $matches[1],
-                    'end' => $this->delimiters['block'][$matches[1]{0}][1],
-                    'element' => [
-                        'name' => 'p',
-                        'attributes' => [
-                            'class' => 'mathjax mathjax--block'
-                        ],
-                        'text' => [],
-                    ]
-                ];
-
-                return $block;
-            }
-        };
-
-        $markdown->blockLatexContinue = function($line, $block)
-        {
-            if (isset($block['complete'])) {
-                return;
-            }
-
-            if (preg_match('/^'. preg_quote($block['end']) . '[ ]*$/', $line['text'])) {
-                $block['complete'] = true;
-                return $block;
-            }
-
-            $block['element']['text'][] = $line['body'];
-            return $block;
-        };
-
-        $markdown->blockLatexComplete = function($block)
-        {
-            $text = $block['start'] . "\n";
-            $text .= implode("\n", $block['element']['text']);
-            $text .= $block['end'];
-
-            $this->id(time() . md5($text));
-            $block['element']['text'] = $text;
-            $block['markup'] = $this->hash($block['element'], $text);
-            return $block;
-        };
-
-        /**
-         * Markdown inline
-         */
-
-        // Add Latex inline environment to Markdown parser
-        $map = ['\\' => 0];
-        foreach ($this->delimiters['inline'] as $marker => $delimiters) {
-            $index = array_key_exists($marker, $map) ? $map[$marker] : null;
-            $markdown->addInlineType($marker, 'Latex', $index);
-        }
-
-        $markdown->inlineLatex = function($excerpt)
-        {
-            $marker = $excerpt['text'][0];
-            list($start, $end) = array_map('preg_quote', $this->delimiters['inline'][$marker]);
-            if (preg_match('/(' . $start . ')[ ]*(.+?)[ ]*(' . $end . ')/s', $excerpt['text'], $matches))
-            {
-                $text = preg_replace("/[\pZ\pC]+/u", ' ', $matches[0]);
-                $block = [
-                    'extent' => strlen($matches[0]),
-                    'start' => $matches[1],
-                    'end' => $matches[3],
-                    'element' => [
-                        'name' => 'span',
-                        'attributes' => [
-                            'class' => 'mathjax mathjax--inline'
-                        ],
-                        'text' => $text
-                    ]
-                ];
-
-                $this->id(time() . md5($text));
-                $block['element']['text'] = $text;
-                $block['markup'] = $this->hash($block['element'], $text);
-                return $block;
-            }
-        };
+        return $this->enabled;
     }
 
     /**
@@ -254,6 +139,146 @@ class MathJax
             $this->id = $var;
         }
         return $this->id;
+    }
+
+    /**
+     * Setup the markdown parser to handle LaTeX formula properly.
+     *
+     * @param  mixed $markdown The markdown parser object
+     */
+    public function setupMarkdown($markdown)
+    {
+        /**
+         * Markdown blocks
+         */
+
+        // Add Latex block environment to Markdown parser
+        $this->markdown = $markdown;
+        foreach ($this->delimiters['block'] as $marker => $delimiters) {
+            list($start, $end) = $delimiters;
+            $markdown->addBlockType($start[0], 'Latex', true, true);
+        }
+
+        $markdown->blockLatex = function($line, $block = null)
+        {
+            if (!$this->enabled()) {
+                return;
+            }
+
+            $delimiters = [];
+            foreach ($this->delimiters['block'] as $marker => $delims) {
+                $delimiters[] = preg_quote($delims[0]);
+            }
+
+            $delimiters = implode('|', $delimiters);
+            if (preg_match('/^(' . $delimiters . ')[ ]*$/', $line['text'], $matches)) {
+                $block = [
+                    'start' => $matches[1],
+                    'end' => $this->delimiters['block'][$matches[1]{0}][1],
+                    'element' => [
+                        'name' => 'p',
+                        'attributes' => [
+                            'class' => 'mathjax mathjax--block'
+                        ],
+                        'text' => [],
+                    ]
+                ];
+
+                return $block;
+            }
+        };
+
+        $markdown->blockLatexContinue = function($line, $block)
+        {
+            if (isset($block['complete'])) {
+                return;
+            }
+
+            if (preg_match('/^'. preg_quote($block['end']) . '[ ]*$/', $line['text'])) {
+                $block['complete'] = true;
+                return $block;
+            }
+
+            $block['element']['text'][] = $line['body'];
+            return $block;
+        };
+
+        $markdown->blockLatexComplete = function($block)
+        {
+            $text = $block['start'] . "\n";
+            $text .= implode("\n", $block['element']['text']);
+            $text .= $block['end'];
+
+            $this->id(time() . md5($text));
+            $block['element']['text'] = $text;
+            $block['markup'] = $this->hash($block['element'], $text);
+            return $block;
+        };
+
+        /**
+         * Markdown inline
+         */
+
+        // Add Latex inline environment to Markdown parser
+        $map = ['\\' => 0];
+        foreach ($this->delimiters['inline'] as $marker => $delimiters) {
+            $index = array_key_exists($marker, $map) ? $map[$marker] : null;
+            $markdown->addInlineType($marker, 'Latex', $index);
+        }
+
+        $markdown->inlineLatex = function($excerpt)
+        {
+            if (!$this->enabled()) {
+                return;
+            }
+
+            $marker = $excerpt['text'][0];
+            list($start, $end) = array_map('preg_quote', $this->delimiters['inline'][$marker]);
+            if (preg_match('/(' . $start . ')[ ]*(.+?)[ ]*(' . $end . ')/s', $excerpt['text'], $matches))
+            {
+                $text = preg_replace("/[\pZ\pC]+/u", ' ', $matches[0]);
+                $block = [
+                    'extent' => strlen($matches[0]),
+                    'start' => $matches[1],
+                    'end' => $matches[3],
+                    'element' => [
+                        'name' => 'span',
+                        'attributes' => [
+                            'class' => 'mathjax mathjax--inline'
+                        ],
+                        'text' => $text
+                    ]
+                ];
+
+                $this->id(time() . md5($text));
+                $block['element']['text'] = $text;
+                $block['markup'] = $this->hash($block['element'], $text);
+                return $block;
+            }
+        };
+    }
+
+    /**
+     * MathJax shortcode
+     *
+     * @param  Event  $event An event object.
+     * @return string        The parsed shortcode.
+     */
+    public function mathjaxShortcode(Event $event)
+    {
+        /* @var \Grav\Common\Data\Data $options */
+        $options = $event['options'];
+
+        $body = trim($event['body']);
+        $type = $options->get('type', 'block');
+
+        if (isset($this->delimiters[$type])) {
+            // Wrap text in display math tags
+            list($pre, $post) = $this->delimiters[$type]['\\'];
+            $body = $pre . $body . $post;
+
+            return $this->render($body, $event['options'], $event['page']);
+        }
     }
 
     /**

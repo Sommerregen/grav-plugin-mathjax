@@ -10,11 +10,11 @@ form:
               underline: true
 
               fields:
-                header.mathjax.process:
+                header.mathjax.active:
                   type: toggle
-                  label: PLUGINS.MATHJAX.PROCESS
+                  label: PLUGINS.MATHJAX.ACTIVE
                   highlight: 1
-                  config-default@: plugins.mathjax.process
+                  config-default@: plugins.mathjax.active
                   options:
                     1: PLUGIN_ADMIN.YES
                     0: PLUGIN_ADMIN.NO

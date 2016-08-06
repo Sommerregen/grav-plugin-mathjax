@@ -97,9 +97,9 @@ form:
       underline: 1
 
       fields:
-        process:
+        active:
           type: toggle
-          label: PLUGINS.MATHJAX.PROCESS
+          label: PLUGINS.MATHJAX.ACTIVE
           default: 1
           options:
             1: PLUGIN_ADMIN.YES
