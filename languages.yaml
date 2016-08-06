@@ -2,12 +2,10 @@
 de:
   PLUGINS:
     MATHJAX:
-      GLOBAL_CONFIG: "Globale Einstellungen"
-      DEFAULT_CONFIG: "Standardeinstellungen für External Links"
-      SPECIFIC_CONFIG:  "Globale und seitenspezifische Einstellungen"
-
       MATHJAX: "MathJax"
       PLUGIN_STATUS: "Plugin Status"
+
+      BASIC_CONFIGURATION: "Einstellungen"
 
       BUILTIN_CSS: "Verwende mitgeliefertes CSS"
       BUILTIN_JS: "Verwende mitgeliefertes JS"
@@ -16,6 +14,7 @@ de:
       WEIGHT_HELP: "Setze negative Werte um MathJax direkt nach *SmartyPants* ausführen zu lassen."
 
       CDN:
+        TITLE: "CDN"
         ENABLED: "Verwende das MathJax Content Delivery Network (CDN)"
         ENABLED_HELP: "Aktivierung dieser Option bewrikt das Laden von MathJax über den MathJax Server (empfohlen) or von dem unten stehenden Link."
         URL: "MathJax CDN URL"
@@ -27,12 +26,9 @@ de:
 en:
   PLUGINS:
     MATHJAX:
-      GLOBAL_CONFIG: "Global plugin configurations"
-      DEFAULT_CONFIG: "Default values for External Links configuration"
-      SPECIFIC_CONFIG: "Global and page specific configurations"
-
       MATHJAX: "MathJax"
       PLUGIN_STATUS: "Plugin status"
+      BASIC_CONFIGURATION: "Basic configuration"
 
       BUILTIN_CSS: "Use built in CSS"
       BUILTIN_JS: "Use built in JS"
@@ -41,6 +37,7 @@ en:
       WEIGHT_HELP: "To process the page contents right after *SmartyPants* use negative values."
 
       CDN:
+        TITLE: "CDN"
         ENABLED: "Use MathJax Content Delivery Network (CDN)"
         ENABLED_HELP: "Check this box to load MathJax source from MathJax servers (recommended) or from the link you can provide below."
         URL: "MathJax CDN URL"
