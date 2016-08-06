@@ -142,6 +142,14 @@ class MathJax
     }
 
     /**
+     * Reset MathJax class
+     */
+    public function reset()
+    {
+        $this->hashes = [];
+    }
+
+    /**
      * Setup the markdown parser to handle LaTeX formula properly.
      *
      * @param  mixed $markdown The markdown parser object
@@ -279,14 +287,6 @@ class MathJax
 
             return $this->render($body, $event['options'], $event['page']);
         }
-    }
-
-    /**
-     * Reset MathJax class
-     */
-    protected function reset()
-    {
-        $this->hashes = [];
     }
 
     /**

@@ -127,7 +127,10 @@ class MathJaxPlugin extends Plugin
         $config = $this->mergeConfig($page);
         $enabled = ($config->get('enabled') && $config->get('active')) ? true : false;
 
+        // Reset MathJax instance
+        $this->mathjax->reset();
         $this->mathjax->enabled($enabled);
+
         if ($enabled) {
             // Set X-UA-Compatible meta tag for Internet Explorer
             $metadata = $page->metadata();
@@ -188,6 +191,10 @@ class MathJaxPlugin extends Plugin
             return;
         }
 
+        // Reset MathJax instance and enable parser
+        $this->mathjax->reset();
+        $this->mathjax->enabled(true);
+
         // Add MathJax stylesheet to page
         if ($this->config->get('plugins.mathjax.built_in_css')) {
             $assets->add('plugins://mathjax/assets/css/mathjax.css');
@@ -229,9 +236,16 @@ class MathJaxPlugin extends Plugin
         $page = func_num_args() > 2 ? func_get_arg(2) : $this->grav['page'];
         $config = $this->mergeConfig($page, true, $params);
 
-        // Render
+        // Enable parser
+        $this->mathjax->enabled(true);
+
+        // Render content
         $content = $this->mathjax->render($content, $config, $page);
-        return $this->mathjax->normalize($content);
+        $content = $this->mathjax->normalize($content);
+
+        // Reset MathJax instance
+        $this->mathjax->reset();
+        return $content;
     }
 
     /**
