@@ -1,5 +1,15 @@
+# v1.5.0-beta.2
+## 08/06/2016
+
+1. [](#new)
+  * Renamed `process` option to `active` (**Breaking Change!**)
+2. [](#improved)
+  * Use tabs in admin settings
+3. [](#bugfix)
+  * Fixed case when page contains no formula.
+  
 # v1.5.0-beta.1
-## 08/07/2016
+## 08/05/2016
 
 2. [](#improved)
   * Refactored code (requires **Grav v1.1.0+**)
