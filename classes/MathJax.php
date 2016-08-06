@@ -37,7 +37,7 @@ class MathJax
      *
      * @var array
      */
-    protected $hashes;
+    protected $hashes = [];
 
     /**
      * A list of delimiters used to mark LaTeX formula.
