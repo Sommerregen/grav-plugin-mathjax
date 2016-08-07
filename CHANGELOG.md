@@ -1,3 +1,15 @@
+# v1.5.0
+## 08/06/2016
+
+1. [](#new)
+  * Released stable version (requires **Grav v1.1.0+** + **Breaking Change!**); please read the beta release changelogs for more details
+  * Added demo content
+2. [](#improved)
+  * Allow `active` option to be toggleable in page options
+  * Updated `README.md`
+3. [](#bugfix)
+  * Fixed `mathjax` Twig filter in case MathJax was disabled on the page
+
 # v1.5.0-beta.2
 ## 08/06/2016
 
@@ -6,7 +18,7 @@
 2. [](#improved)
   * Use tabs in admin settings
 3. [](#bugfix)
-  * Fixed case when page contains no formula.
+  * Fixed case when page contains no formula
   
 # v1.5.0-beta.1
 ## 08/05/2016
