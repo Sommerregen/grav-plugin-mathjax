@@ -13,8 +13,8 @@ form:
                 header.mathjax.active:
                   type: toggle
                   label: PLUGINS.MATHJAX.ACTIVE
+                  toggleable: true
                   highlight: 1
-                  config-default@: plugins.mathjax.active
                   options:
                     1: PLUGIN_ADMIN.YES
                     0: PLUGIN_ADMIN.NO

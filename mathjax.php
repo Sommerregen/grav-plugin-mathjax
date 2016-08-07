@@ -214,8 +214,7 @@ class MathJaxPlugin extends Plugin
         // Load MathJax library
         if ($this->config->get('plugins.mathjax.CDN.enabled') || !$installed) {
             // Load MathJax library via CDN
-            $cdn_url = $this->config->get('plugins.mathjax.CDN.url');
-            $assets->add($cdn_url);
+            $assets->add($this->config->get('plugins.mathjax.CDN.url'));
         } elseif ($installed) {
             // Load MathJax library from user data path
             $assets->add('user://data/mathjax/MathJax.js');
