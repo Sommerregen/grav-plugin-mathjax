@@ -1,15 +1,8 @@
 form:
-  validation: loose
-
   fields:
     tabs:
-      type: tabs
-      active: 1
-
       fields:
         options:
-          type: tab
-
           fields:
             mathjax:
               type: section
@@ -17,11 +10,11 @@ form:
               underline: true
 
               fields:
-                header.mathjax.process:
+                header.mathjax.active:
                   type: toggle
-                  label: PLUGINS.MATHJAX.PROCESS
+                  label: PLUGINS.MATHJAX.ACTIVE
+                  toggleable: true
                   highlight: 1
-                  '@config-default': plugins.mathjax.process
                   options:
                     1: PLUGIN_ADMIN.YES
                     0: PLUGIN_ADMIN.NO

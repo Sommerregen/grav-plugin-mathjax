@@ -86,19 +86,17 @@ The `MathJax` plugin comes with some sensible default configuration, that are pr
 # Global plugin configurations
 
 enabled: true                 # Set to false to disable this plugin completely
+active: true                  # Enable or disable this plugin for a page
+
 built_in_css: true            # Use built-in CSS of the plugin
 built_in_js: true             # Use built-in JS of the plugin
 weight: -5                    # Set the weight (order of execution)
 
-# Default values for MathJax configuration.
+# Default values for MathJax configuration
 
 CDN:
   enabled: true               # Use MathJax Content Delivery Network (CDN)
   url: https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
-
-# Global and page specific configurations
-
-process: true                 # (De-)Activate MathJax filter globally
 ```
 
 If you need to change any value, then the best process is to copy the [mathjax.yaml](mathjax.yaml) file into your `users/config/plugins/` folder (create it if it doesn't exist), and then modify there. This will override the default settings.
