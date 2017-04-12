@@ -11,4 +11,4 @@ weight: -5                    # Set the weight (order of execution)
 
 CDN:
   enabled: true               # Use MathJax Content Delivery Network (CDN)
-  url: https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+  url: https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML
