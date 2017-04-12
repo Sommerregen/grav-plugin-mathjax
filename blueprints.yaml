@@ -1,15 +1,15 @@
-name: MathJax
-version: 1.5.0
+name: "MathJax"
+version: "1.5.0"
 description: "This plugin allows you to include math formulas in your web pages, either using TeX and LaTeX notation, and/or as MathML."
-icon: subscript
+icon: "subscript"
 author:
-  name: Sommerregen
-  email: sommerregen@benjamin-regler.de
-homepage: https://github.com/sommerregen/grav-plugin-mathjax
-docs: https://github.com/sommerregen/grav-plugin-mathjax/blob/master/README.md
-keywords: [latex, mathjax, formula, filter, javascript, plugin]
-bugs: https://github.com/sommerregen/grav-plugin-mathjax/issues
-license: MIT/GPL
+  name: "Sommerregen"
+  email: "sommerregen@benjamin-regler.de"
+homepage: "https://github.com/sommerregen/grav-plugin-mathjax"
+keywords: ["latex", "mathjax", "formula", "filter", "javascript", "plugin"]
+docs: "https://github.com/sommerregen/grav-plugin-mathjax/blob/master/README.md"
+bugs: "https://github.com/sommerregen/grav-plugin-mathjax/issues"
+license: "MIT/GPL"
 
 form:
   validation: strict
