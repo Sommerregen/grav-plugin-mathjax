@@ -1,3 +1,9 @@
+# v1.5.1
+## 04/12/2017
+
+2. [](#improved)
+  * Change CDN provider to CloudFlare [#6](https://github.com/Sommerregen/grav-plugin-mathjax/issues/6) (`https://cdn.mathjax.org` end-of-life)
+
 # v1.5.0
 ## 08/06/2016
 
@@ -19,7 +25,7 @@
   * Use tabs in admin settings
 3. [](#bugfix)
   * Fixed case when page contains no formula
-  
+
 # v1.5.0-beta.1
 ## 08/05/2016
 
