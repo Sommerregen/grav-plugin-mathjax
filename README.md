@@ -94,9 +94,18 @@ weight: -5                    # Set the weight (order of execution)
 
 # Default values for MathJax configuration
 
+delimiters:
+  inline:                 # Inline delimiters
+    '\(': '\)'            # - MathJax/KaTeX
+    '$': '$'              # - LaTeX
+
+  block:                  # Block delimiters
+    '\[': '\]'            # - MathJax/KaTeX
+    '$$': '$$'            # - LaTeX
+
 CDN:
   enabled: true               # Use MathJax Content Delivery Network (CDN)
-  url: https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+  url: https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML
 ```
 
 If you need to change any value, then the best process is to copy the [mathjax.yaml](mathjax.yaml) file into your `users/config/plugins/` folder (create it if it doesn't exist), and then modify there. This will override the default settings.
