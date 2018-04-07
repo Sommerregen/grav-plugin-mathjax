@@ -1,5 +1,5 @@
 name: "MathJax"
-version: "1.5.1"
+version: "1.6.0"
 description: "This plugin allows you to include math formulas in your web pages, either using TeX and LaTeX notation, and/or as MathML."
 icon: "subscript"
 author:
@@ -47,6 +47,18 @@ form:
                 0: PLUGIN_ADMIN.NO
               validate:
                 type: bool
+
+            delimiters.block:
+              type: array
+              label: PLUGINS.MATHJAX.DELIMITERS.BLOCK
+              placeholder_key: '\['
+              placeholder_value: '\]'
+
+            delimiters.inline:
+              type: array
+              label: PLUGINS.MATHJAX.DELIMITERS.INLINE
+              placeholder_key: '\('
+              placeholder_value: '\)'
 
         basic:
           type: tab
