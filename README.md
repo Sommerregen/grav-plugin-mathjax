@@ -1,6 +1,6 @@
 # [![Grav MathJax Plugin](assets/logo.png)][project]
 
-[![Release](https://img.shields.io/github/release/sommerregen/grav-plugin-mathjax.svg)][project] [![Issues](https://img.shields.io/github/issues/sommerregen/grav-plugin-mathjax.svg)][issues] [![Dual license](https://img.shields.io/badge/dual%20license-MIT%2FGPL-blue.svg)](LICENSE "License") <span style="float:right;">[![Flattr](https://api.flattr.com/button/flattr-badge-large.png)][flattr] [![PayPal](https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif)][paypal]</span>
+[![Release](https://img.shields.io/github/release/sommerregen/grav-plugin-mathjax.svg)][project] [![Issues](https://img.shields.io/github/issues/sommerregen/grav-plugin-mathjax.svg)][issues] [![Dual license](https://img.shields.io/badge/dual%20license-MIT%2FGPL-blue.svg)](LICENSE "License")
 
 > This plugin allows you to include math formulas in your web pages, either using TeX and LaTeX notation, and/or as MathML.
 
@@ -94,9 +94,18 @@ weight: -5                    # Set the weight (order of execution)
 
 # Default values for MathJax configuration
 
+delimiters:
+  inline:                 # Inline delimiters
+    '\(': '\)'            # - MathJax/KaTeX
+    '$': '$'              # - LaTeX
+
+  block:                  # Block delimiters
+    '\[': '\]'            # - MathJax/KaTeX
+    '$$': '$$'            # - LaTeX
+
 CDN:
   enabled: true               # Use MathJax Content Delivery Network (CDN)
-  url: https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+  url: https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML
 ```
 
 If you need to change any value, then the best process is to copy the [mathjax.yaml](mathjax.yaml) file into your `users/config/plugins/` folder (create it if it doesn't exist), and then modify there. This will override the default settings.
@@ -171,15 +180,9 @@ After that please note:
 * Feature requests are more likely to get attention if you include a clearly described use case.
 * If you wish to submit a pull request, please make again sure that your request match the [guidelines for contributing](docs/CONTRIBUTING.md) and that you keep track of adding unit tests for any new or changed functionality.
 
-### Support and donations
-
-If you like my project, feel free to support me via [![Flattr](https://api.flattr.com/button/flattr-badge-large.png)][flattr] or by sending me some bitcoins to [**1HQdy5aBzNKNvqspiLvcmzigCq7doGfLM4**][bitcoin].
-
-Thanks!
-
 ## License
 
-Copyright (c) 2017 [Benjamin Regler][github]. See also the list of [contributors] who participated in this project.
+Copyright (c) 2017+ [Benjamin Regler][github]. See also the list of [contributors] who participated in this project.
 
 [Dual-licensed](LICENSE) for use under the terms of the [MIT][mit-license] or [GPLv3][gpl-license] licenses.
 
@@ -188,10 +191,6 @@ Copyright (c) 2017 [Benjamin Regler][github]. See also the list of [contributors
 [github]: https://github.com/sommerregen/ "GitHub account from Benjamin Regler"
 [gpl-license]: http://opensource.org/licenses/GPL-3.0 "GPLv3 license"
 [mit-license]: http://www.opensource.org/licenses/mit-license.php "MIT license"
-
-[flattr]: https://flattr.com/submit/auto?user_id=Sommerregen&url=https://github.com/sommerregen/grav-plugin-mathjax "Flatter my GitHub project"
-[paypal]: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SYFNP82USG3RN "Donate for my GitHub project using PayPal"
-[bitcoin]: bitcoin:1HQdy5aBzNKNvqspiLvcmzigCq7doGfLM4?label=GitHub%20project "Donate for my GitHub project using BitCoin"
 [gnu]: https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/License_icon-gpl-88x31.svg/88px-License_icon-gpl-88x31.svg.png "GNU license - Some rights reserved"
 
 [project]: https://github.com/sommerregen/grav-plugin-mathjax

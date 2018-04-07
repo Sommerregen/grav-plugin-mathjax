@@ -1,3 +1,9 @@
+# v1.6.0
+## 04/07/2018
+
+2. [](#improved)
+  * Allow to customize LaTeX delimiters [#7](https://github.com/Sommerregen/grav-plugin-mathjax/issues/7) (Maybe MathJax.php Shouldn't Hard Code Delimiters?) & [#8](https://github.com/Sommerregen/grav-plugin-mathjax/issues/8) (Escape dollar sign)
+
 # v1.5.1
 ## 04/12/2017
 

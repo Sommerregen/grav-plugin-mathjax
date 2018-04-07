@@ -21,6 +21,9 @@ de:
         URL_HELP: "Gebe hier die MathJax CDN URL ein oder lasse es frei um MathJax direkt von wwww.mathjax.org zu laden."
 
       ACTIVE: "Aktiviere <code>MathJax</code> auf Seite"
+      DELIMITERS:
+        BLOCK: 'LaTeX Block-begrenzer'
+        INLINE: 'LaTeX Inline-Begrenzer'
 
 # English
 en:
@@ -44,3 +47,7 @@ en:
         URL_HELP: "Enter the Mathjax CDN URL here or leave it unchanged to use the one provided by wwww.mathjax.org"
 
       ACTIVE: "Activate <code>MathJax</code> filter on the page"
+
+      DELIMITERS:
+        BLOCK: 'LaTeX block delimiters'
+        INLINE: 'LaTeX inline delimiters'
