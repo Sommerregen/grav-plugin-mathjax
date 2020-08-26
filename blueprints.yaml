@@ -98,7 +98,7 @@ form:
 
         cdn:
           type: tab
-          title: PLUGINS.MATHJAX.CDN
+          title: PLUGINS.MATHJAX.CDN.TITLE
 
           fields:
             CDN.enabled:
